@@ -16,6 +16,7 @@
  */
 
 //BEGIN_INCLUDE(all)
+#include "openglHelper.cpp"
 #include <jni.h>
 #include <errno.h>
 
@@ -25,6 +26,8 @@
 #include <android/sensor.h>
 #include <android/log.h>
 #include <android_native_app_glue.h>
+
+
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
@@ -37,6 +40,8 @@ struct saved_state {
     int32_t x;
     int32_t y;
 };
+
+
 
 /**
  * Shared state for our app.
@@ -70,7 +75,7 @@ static int engine_init_display(struct engine* engine) {
      */
     const EGLint attribs[] = {
     		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+            //EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
             EGL_BLUE_SIZE, 8,
             EGL_GREEN_SIZE, 8,
             EGL_RED_SIZE, 8,
@@ -125,9 +130,11 @@ static int engine_init_display(struct engine* engine) {
 
     // Initialize GL state.
     //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
     //glShadeModel(GL_SMOOTH);
     glDisable(GL_DEPTH_TEST);
+
+    initOpengl();
 
     return 0;
 }
@@ -140,11 +147,10 @@ static void engine_draw_frame(struct engine* engine) {
         // No display.
         return;
     }
-
-    // Just fill the screen with a color.
-    glClearColor(((float)engine->state.x)/engine->width, engine->state.angle,
-            ((float)engine->state.y)/engine->height, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
+    //float temp = 0.3f;
+    float temp = static_cast<float>(engine->state.x);
+    temp = (temp / engine->width) - 0.5;
+    openglDraw(temp);
 
     eglSwapBuffers(engine->display, engine->surface);
 }
@@ -176,8 +182,8 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
     struct engine* engine = (struct engine*)app->userData;
     if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
         engine->animating = 1;
-        engine->state.x = AMotionEvent_getX(event, 0);
-        engine->state.y = AMotionEvent_getY(event, 0);
+        engine->state.x = AMotionEvent_getRawX(event, 0);
+        engine->state.y = AMotionEvent_getRawY(event, 0);
         return 1;
     }
     return 0;
