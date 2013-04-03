@@ -11,6 +11,7 @@
 #include <GLES2/gl2ext.h>
 #include <algorithm>
 #include <android/log.h>
+#include "RacketBar.cpp"
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 
@@ -41,8 +42,6 @@ const short drawOrder[] = {1,2,3};
 GLuint theProgram;
 GLuint positionBufferObject;
 GLuint positionBufferPointer;
-
-
 
 GLuint CreateShader(GLenum eShaderType, const std::string &strShaderFile) {
 	GLuint shader = glCreateShader(eShaderType);
@@ -152,5 +151,21 @@ void openglDraw(float position) {
 
 	glDisableVertexAttribArray(positionBufferPointer);
 	glUseProgram(0);
+}
+
+RacketBar *rbUser;
+RacketBar *rbCPU;
+
+void initOpengl2(){
+		rbUser = new RacketBar(true);
+		rbCPU = new RacketBar(false);
+}
+
+void openglDraw2(float position){
+	glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	//RacketBar rb;
+	rbUser->draw(position);
+	rbCPU->draw(0);
 }
 
