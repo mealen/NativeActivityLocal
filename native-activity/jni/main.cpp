@@ -135,7 +135,7 @@ static int engine_init_display(struct engine* engine) {
     glDisable(GL_DEPTH_TEST);
 
     //initOpengl();
-    initOpengl2();
+    initOpengl();
 
     return 0;
 }
@@ -151,7 +151,7 @@ static void engine_draw_frame(struct engine* engine) {
     //float temp = 0.3f;
     float temp = static_cast<float>(engine->state.x);
     temp = (temp / engine->width) - 0.5;
-    openglDraw2(temp);
+    openglDraw(temp);
 
     eglSwapBuffers(engine->display, engine->surface);
 }
