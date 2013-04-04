@@ -124,7 +124,7 @@ private:
 		return program;
 	}
 
-	void InitializeProgram() {
+	void initializeProgram() {
 		std::vector<GLuint> shaderList;
 
 		shaderList.push_back(CreateShader(GL_VERTEX_SHADER, VSbasic));
@@ -135,23 +135,15 @@ private:
 		std::for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
 	}
 
-	void InitializeVertexBuffer() {
+	void initializeVertexBuffer(){
 		glGenBuffers(1, &positionBufferObject);
 
 		glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
-
-		float arrayForGL[vertexPositionsSize];
-		for(int i=0; i< vertexPositionsSize;i++){
-			float* element = vertexPositionsPointer + i;
-			LOGI("element %d is %f", i, *element);
-			arrayForGL[i] = *element;
-			LOGI("arrayForGL[%d] is %f", i, arrayForGL[i]);
-
-		}
-		glBufferData(GL_ARRAY_BUFFER, sizeof(arrayForGL), arrayForGL,
+		glBufferData(GL_ARRAY_BUFFER, vertexPositionsSize * sizeof(float), vertexPositionsPointer,
 				GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
+
 public:
 
 
@@ -164,9 +156,9 @@ public:
 		isUserBar = userBar;
 		initializeVertexShader();
 		initializeFragmentShader();
-		InitializeProgram();
+		initializeProgram();
 		initializeVertexPositions();
-		InitializeVertexBuffer();
+		initializeVertexBuffer();
 
 		positionBufferPointer = glGetAttribLocation(theProgram, "vPosition");
 	}
