@@ -157,9 +157,9 @@ public:
 
 	RacketBar(bool userBar) {
 		if(userBar){
-			fYOffset = -0.5f;
+			fYOffset = -0.8f;
 		} else {
-			 fYOffset = 0.5f;
+			 fYOffset = 0.8f;
 		}
 		isUserBar = userBar;
 		initializeVertexShader();
