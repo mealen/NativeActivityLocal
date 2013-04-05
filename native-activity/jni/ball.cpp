@@ -11,36 +11,38 @@
 #include <GLES2/gl2ext.h>
 #include <algorithm>
 #include <android/log.h>
+#include  <math.h>
+
+#define PI 3.14159265
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 
-class RacketBar {
-
+class Ball {
 
 private:
-	bool isUserBar;
+	float fXOffset;
 	float fYOffset;
 	float* vertexPositionsPointer;
-	int vertexPositionsSize;
 	int elementPerVertex;
+	int vertexPositionsSize;
 	GLuint theProgram;
 	GLuint positionBufferObject;
 	GLuint positionBufferPointer;
 
 	std::string VSbasic;
 	std::string FSbasic;
-	void initializeVertexShader(){
+	void initializeVertexShader() {
 		VSbasic = "attribute vec4 vPosition;\n"
-					"uniform vec2 offset;"
-					"void main()\n"
-					"{\n"
-					"vec4 totalOffset = vec4(offset.x, offset.y, 0.0, 0.0);\n"
-					" gl_Position = vPosition + totalOffset;\n"
-					"}\n";
+				"uniform vec2 offset;"
+				"void main()\n"
+				"{\n"
+				"vec4 totalOffset = vec4(offset.x, offset.y, 0.0, 0.0);\n"
+				" gl_Position = vPosition + totalOffset;\n"
+				"}\n";
 
 	}
 
-	void initializeFragmentShader(){
+	void initializeFragmentShader() {
 		FSbasic = "precision mediump float;\n"
 		// "uniform vec4 vColor;\n"
 						"void main() {\n"
@@ -48,19 +50,31 @@ private:
 						"}\n";
 	}
 
-	void initializeVertexPositions(){
-		float incomingVertexes[] = { -0.5f, -0.05f, 0.0f, // bottom left
-				0.5f, -0.05f, 0.0f, // bottom right
-				-0.5f, 0.05f, 0.0f, // top
-				0.5f, 0.05, 0.0f // top
-				};
+	void initializeVertexPositions() {
+		float ballRadius = 0.1;
+		int ballVertexCount = 16;
+		float ballElementAngle = 3.14159265 / ballVertexCount;
+
+		LOGI("ball angle = %f", ballElementAngle);
+
 
 		elementPerVertex = 3;
-		vertexPositionsSize = sizeof(incomingVertexes);
+		vertexPositionsSize = sizeof(float) * elementPerVertex * (ballVertexCount + 2); //+1 for center vertex, +1 for start and stop gets to be the same
 
 		vertexPositionsPointer = (float*) malloc(vertexPositionsSize);
-		memcpy(vertexPositionsPointer, incomingVertexes, vertexPositionsSize);
 		vertexPositionsSize = vertexPositionsSize / sizeof(float);
+
+		*vertexPositionsPointer = 0.0f;
+		*(vertexPositionsPointer + 1) = 0.0f;
+		*(vertexPositionsPointer + 2) = 0.0f;
+		for(int i=1;i <= ballVertexCount;i++){
+			*(vertexPositionsPointer + (elementPerVertex * i)) = sin(	ballElementAngle * 2 * i) * ballRadius;
+			*(vertexPositionsPointer + (elementPerVertex * i) + 1) = cos(	ballElementAngle * 2 * i) * ballRadius;
+			*(vertexPositionsPointer + (elementPerVertex * i) + 2) = 0.0f;
+		}
+		*(vertexPositionsPointer + (elementPerVertex * (ballVertexCount+1))) = sin(	ballElementAngle * 2 * (ballVertexCount+1)) * ballRadius;
+		*(vertexPositionsPointer + (elementPerVertex * (ballVertexCount+1))+1) = cos(	ballElementAngle * 2 * (ballVertexCount+1)) * ballRadius;
+		*(vertexPositionsPointer + (elementPerVertex * (ballVertexCount+1))+2) = 0.0f;
 
 	}
 
@@ -135,25 +149,21 @@ private:
 		std::for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
 	}
 
-	void initializeVertexBuffer(){
+	void initializeVertexBuffer() {
 		glGenBuffers(1, &positionBufferObject);
 
 		glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
-		glBufferData(GL_ARRAY_BUFFER, vertexPositionsSize * sizeof(float), vertexPositionsPointer,
-				GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vertexPositionsSize * sizeof(float),
+				vertexPositionsPointer, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
 public:
 
+	Ball() {
+		fXOffset = 0.0f;
+		fYOffset = 0.0f;
 
-	RacketBar(bool userBar) {
-		if(userBar){
-			fYOffset = -0.8f;
-		} else {
-			 fYOffset = 0.8f;
-		}
-		isUserBar = userBar;
 		initializeVertexShader();
 		initializeFragmentShader();
 		initializeProgram();
@@ -163,21 +173,20 @@ public:
 		positionBufferPointer = glGetAttribLocation(theProgram, "vPosition");
 	}
 
-	void draw(float position) {
+	void draw(float xPosition, float yPosition) {
 
 		glUseProgram(theProgram);
 
 		GLint offsetLocation = glGetUniformLocation(theProgram, "offset");
 
-		glUniform2f(offsetLocation, position, fYOffset);
+		glUniform2f(offsetLocation, xPosition, yPosition);
 
 		glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
 		glEnableVertexAttribArray(positionBufferPointer);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		//FIXME 3 should not be hardcoded
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexPositionsSize / elementPerVertex);
-		//glDrawElements(GL_TRIANGLES, sizeof(drawOrder),GL_UNSIGNED_SHORT, &drawOrderBufferObject);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+				vertexPositionsSize / elementPerVertex);
 
 		glDisableVertexAttribArray(positionBufferPointer);
 		glUseProgram(0);

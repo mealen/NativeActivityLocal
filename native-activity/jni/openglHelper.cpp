@@ -12,13 +12,16 @@
 #include <algorithm>
 #include <android/log.h>
 #include "RacketBar.cpp"
+#include "ball.cpp"
 
 RacketBar *rbUser;
 RacketBar *rbCPU;
+Ball *ball;
 
 void initOpengl(){
 		rbUser = new RacketBar(true);
 		rbCPU = new RacketBar(false);
+		ball = new Ball();
 }
 
 void openglDraw(float position){
@@ -27,5 +30,6 @@ void openglDraw(float position){
 	//RacketBar rb;
 	rbUser->draw(position);
 	rbCPU->draw(0);
+	ball->draw(0,0);
 }
 
