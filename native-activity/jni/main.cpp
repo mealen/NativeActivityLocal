@@ -16,51 +16,21 @@
  */
 
 //BEGIN_INCLUDE(all)
-#include "openglHelper.cpp"
 #include <jni.h>
 #include <errno.h>
 
 #include <EGL/egl.h>
-#include <GLES2/gl2.h>
 
-#include <android/sensor.h>
 #include <android/log.h>
-#include <android_native_app_glue.h>
 
 
+#include "main.h"
+#include "engine.h"
+
+namespace androidPart {
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
-
-/**
- * Our saved state data.
- */
-struct saved_state {
-    float angle;
-    int32_t x;
-    int32_t y;
-};
-
-
-
-/**
- * Shared state for our app.
- */
-struct engine {
-    struct android_app* app;
-
-    ASensorManager* sensorManager;
-    const ASensor* accelerometerSensor;
-    ASensorEventQueue* sensorEventQueue;
-
-    int animating;
-    EGLDisplay display;
-    EGLSurface surface;
-    EGLContext context;
-    int32_t width;
-    int32_t height;
-    struct saved_state state;
-};
 
 /**
  * Initialize an EGL context for the current display.
@@ -132,28 +102,12 @@ static int engine_init_display(struct engine* engine) {
     //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
     //glEnable(GL_CULL_FACE);
     //glShadeModel(GL_SMOOTH);
-    glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_DEPTH_TEST);
 
     //initOpengl();
-    initOpengl();
+
 
     return 0;
-}
-
-/**
- * Just the current frame in the display.
- */
-static void engine_draw_frame(struct engine* engine) {
-    if (engine->display == NULL) {
-        // No display.
-        return;
-    }
-    //float temp = 0.3f;
-    float temp = static_cast<float>(engine->state.x);
-    temp = (temp / engine->width) - 0.5;
-    openglDraw(temp);
-
-    eglSwapBuffers(engine->display, engine->surface);
 }
 
 /**
@@ -190,6 +144,49 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
     return 0;
 }
 
+int processEvents(android_app* state, androidPart::engine* engine){
+
+    // Read all pending events.
+    int ident;
+    int events;
+    struct android_poll_source* source;
+
+    // If not animating, we will block forever waiting for events.
+    // If animating, we loop until all events are read, then continue
+    // to draw the next frame of animation.
+    while ((ident=ALooper_pollAll(engine->animating ? 0 : -1, NULL, &events,
+            (void**)&source)) >= 0) {
+
+        // Process this event.
+        if (source != NULL) {
+            source->process(state, source);
+        }
+
+        // If a sensor has data, process it now.
+        if (ident == LOOPER_ID_USER) {
+            if (engine->accelerometerSensor != NULL) {
+                ASensorEvent event;
+                while (ASensorEventQueue_getEvents(engine->sensorEventQueue,
+                        &event, 1) > 0) {
+                	/*
+                    LOGI("accelerometer: x=%f y=%f z=%f",
+                            event.acceleration.x, event.acceleration.y,
+                            event.acceleration.z);
+                	*/
+                }
+            }
+        }
+
+        // Check if we are exiting.
+        if (state->destroyRequested != 0) {
+            engine_term_display(engine);
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 /**
  * Process the next main command.
  */
@@ -206,7 +203,6 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
             // The window is being shown, get it ready.
             if (engine->app->window != NULL) {
                 engine_init_display(engine);
-                engine_draw_frame(engine);
             }
             break;
         case APP_CMD_TERM_WINDOW:
@@ -232,17 +228,19 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
             }
             // Also stop animating.
             engine->animating = 0;
-            engine_draw_frame(engine);
             break;
     }
 }
 
+}
 /**
  * This is the main entry point of a native application that is using
  * android_native_app_glue.  It runs in its own thread, with its own
  * event loop for receiving input events and doing other things.
  */
 void android_main(struct android_app* state) {
+	using namespace androidPart;
+
     struct engine engine;
 
     // Make sure glue isn't stripped.
@@ -266,58 +264,23 @@ void android_main(struct android_app* state) {
         engine.state = *(struct saved_state*)state->savedState;
     }
 
+
+    androng::GameEngine* gameEngine;
+
+    gameEngine = new androng::GameEngine(state, &engine);//&state, &engine);
+
+
     // loop waiting for stuff to do.
-
+    gameEngine->runGame();
+    /*
     while (1) {
-        // Read all pending events.
-        int ident;
-        int events;
-        struct android_poll_source* source;
 
-        // If not animating, we will block forever waiting for events.
-        // If animating, we loop until all events are read, then continue
-        // to draw the next frame of animation.
-        while ((ident=ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events,
-                (void**)&source)) >= 0) {
+    	if(processEvents(state, &engine))
+    		return;
 
-            // Process this event.
-            if (source != NULL) {
-                source->process(state, source);
-            }
-
-            // If a sensor has data, process it now.
-            if (ident == LOOPER_ID_USER) {
-                if (engine.accelerometerSensor != NULL) {
-                    ASensorEvent event;
-                    while (ASensorEventQueue_getEvents(engine.sensorEventQueue,
-                            &event, 1) > 0) {
-                    	/*
-                        LOGI("accelerometer: x=%f y=%f z=%f",
-                                event.acceleration.x, event.acceleration.y,
-                                event.acceleration.z);
-                    	*/
-                    }
-                }
-            }
-
-            // Check if we are exiting.
-            if (state->destroyRequested != 0) {
-                engine_term_display(&engine);
-                return;
-            }
-        }
-
-        if (engine.animating) {
-            // Done with events; draw next animation frame.
-            engine.state.angle += .01f;
-            if (engine.state.angle > 1) {
-                engine.state.angle = 0;
-            }
-
-            // Drawing is throttled to the screen update rate, so there
-            // is no need to do timing here.
-            engine_draw_frame(&engine);
-        }
     }
+     */
 }
+
+
 //END_INCLUDE(all)

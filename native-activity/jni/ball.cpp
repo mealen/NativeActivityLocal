@@ -1,7 +1,7 @@
 /*
  * openglHelper.cpp
  *
- *  Created on: 28 Mar 2013
+ *  Created on: 05 Nis 2013
  *      Author: Engin Manap
  */
 
@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <android/log.h>
 #include  <math.h>
+
+namespace androng {
 
 #define PI 3.14159265
 
@@ -161,6 +163,7 @@ private:
 public:
 
 	Ball() {
+		LOGI("init for ball");
 		fXOffset = 0.0f;
 		fYOffset = 0.0f;
 
@@ -194,3 +197,4 @@ public:
 
 };
 
+}

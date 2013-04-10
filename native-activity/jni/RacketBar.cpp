@@ -14,6 +14,7 @@
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 
+namespace androng {
 class RacketBar {
 
 
@@ -148,6 +149,10 @@ public:
 
 
 	RacketBar(bool userBar) {
+		if(userBar)
+			LOGI("Racketbar for user init");
+		else
+			LOGI("Racketbar for CPU init");
 		if(userBar){
 			fYOffset = -0.8f;
 		} else {
@@ -184,4 +189,6 @@ public:
 	}
 
 };
+
+}
 

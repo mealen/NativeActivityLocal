@@ -14,6 +14,7 @@
 #include "RacketBar.cpp"
 #include "ball.cpp"
 
+namespace androng{
 RacketBar *rbUser;
 RacketBar *rbCPU;
 Ball *ball;
@@ -33,3 +34,4 @@ void openglDraw(float position){
 	ball->draw(0,0);
 }
 
+}
