@@ -43,7 +43,7 @@ struct engine {
 };
 
 
- int processEvents(android_app* state, androidPart::engine* engine);
+ bool processEvents(android_app* state, androidPart::engine* androidEngine);
 
 }
 #endif /* MAIN_H_ */
