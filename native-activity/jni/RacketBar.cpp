@@ -14,6 +14,7 @@
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 
+namespace androng {
 class RacketBar {
 
 
@@ -185,3 +186,4 @@ public:
 
 };
 
+}

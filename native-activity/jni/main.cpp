@@ -32,6 +32,8 @@
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
 
+namespace androidPart {
+
 /**
  * Our saved state data.
  */
@@ -135,7 +137,7 @@ static int engine_init_display(struct engine* engine) {
     glDisable(GL_DEPTH_TEST);
 
     //initOpengl();
-    initOpengl();
+    androng::initOpengl();
 
     return 0;
 }
@@ -151,7 +153,7 @@ static void engine_draw_frame(struct engine* engine) {
     //float temp = 0.3f;
     float temp = static_cast<float>(engine->state.x);
     temp = (temp / engine->width) - 0.5;
-    openglDraw(temp);
+    androng::openglDraw(temp);
 
     eglSwapBuffers(engine->display, engine->surface);
 }
@@ -237,12 +239,15 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
     }
 }
 
+}
+
 /**
  * This is the main entry point of a native application that is using
  * android_native_app_glue.  It runs in its own thread, with its own
  * event loop for receiving input events and doing other things.
  */
 void android_main(struct android_app* state) {
+	using namespace androidPart;
     struct engine engine;
 
     // Make sure glue isn't stripped.
@@ -320,4 +325,5 @@ void android_main(struct android_app* state) {
         }
     }
 }
-//END_INCLUDE(all)
+
+

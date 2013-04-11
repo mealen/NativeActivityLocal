@@ -13,9 +13,14 @@
 #include <android/log.h>
 #include  <math.h>
 
+
+
 #define PI 3.14159265
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
+
+namespace androng {
+
 
 class Ball {
 
@@ -194,3 +199,4 @@ public:
 
 };
 
+}
