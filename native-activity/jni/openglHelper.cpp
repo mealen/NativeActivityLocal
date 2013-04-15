@@ -5,19 +5,13 @@
  *      Author: Engin Manap
  */
 
-#include <string>
-#include <vector>
+
+#include "openglHelper.h"
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#include <algorithm>
-#include <android/log.h>
-#include "RacketBar.cpp"
-#include "ball.cpp"
+
 
 namespace androng {
-RacketBar *rbUser;
-RacketBar *rbCPU;
-Ball *ball;
 
 void initOpengl(){
 		rbUser = new RacketBar(true);

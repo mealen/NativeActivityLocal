@@ -17,7 +17,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := native-activity
-LOCAL_SRC_FILES :=  GameEngine.cpp main.cpp
+LOCAL_SRC_FILES := main.cpp GameEngine.cpp
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv2
 LOCAL_STATIC_LIBRARIES := android_native_app_glue
 

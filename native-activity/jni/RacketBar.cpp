@@ -17,7 +17,6 @@
 namespace androng {
 class RacketBar {
 
-
 private:
 	bool isUserBar;
 	float fYOffset;
@@ -30,18 +29,18 @@ private:
 
 	std::string VSbasic;
 	std::string FSbasic;
-	void initializeVertexShader(){
+	void initializeVertexShader() {
 		VSbasic = "attribute vec4 vPosition;\n"
-					"uniform vec2 offset;"
-					"void main()\n"
-					"{\n"
-					"vec4 totalOffset = vec4(offset.x, offset.y, 0.0, 0.0);\n"
-					" gl_Position = vPosition + totalOffset;\n"
-					"}\n";
+				"uniform vec2 offset;"
+				"void main()\n"
+				"{\n"
+				"vec4 totalOffset = vec4(offset.x, offset.y, 0.0, 0.0);\n"
+				" gl_Position = vPosition + totalOffset;\n"
+				"}\n";
 
 	}
 
-	void initializeFragmentShader(){
+	void initializeFragmentShader() {
 		FSbasic = "precision mediump float;\n"
 		// "uniform vec4 vColor;\n"
 						"void main() {\n"
@@ -49,7 +48,7 @@ private:
 						"}\n";
 	}
 
-	void initializeVertexPositions(){
+	void initializeVertexPositions() {
 		float incomingVertexes[] = { -0.5f, -0.05f, 0.0f, // bottom left
 				0.5f, -0.05f, 0.0f, // bottom right
 				-0.5f, 0.05f, 0.0f, // top
@@ -136,23 +135,22 @@ private:
 		std::for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
 	}
 
-	void initializeVertexBuffer(){
+	void initializeVertexBuffer() {
 		glGenBuffers(1, &positionBufferObject);
 
 		glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
-		glBufferData(GL_ARRAY_BUFFER, vertexPositionsSize * sizeof(float), vertexPositionsPointer,
-				GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vertexPositionsSize * sizeof(float),
+				vertexPositionsPointer, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
 public:
 
-
 	RacketBar(bool userBar) {
 		if(userBar){
 			fYOffset = -0.8f;
 		} else {
-			 fYOffset = 0.8f;
+			fYOffset = 0.8f;
 		}
 		isUserBar = userBar;
 		initializeVertexShader();
@@ -177,7 +175,8 @@ public:
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		//FIXME 3 should not be hardcoded
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexPositionsSize / elementPerVertex);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0,
+				vertexPositionsSize / elementPerVertex);
 		//glDrawElements(GL_TRIANGLES, sizeof(drawOrder),GL_UNSIGNED_SHORT, &drawOrderBufferObject);
 
 		glDisableVertexAttribArray(positionBufferPointer);

@@ -17,21 +17,11 @@
 
 //BEGIN_INCLUDE(all)
 
-#include <jni.h>
-#include <errno.h>
-
-#include <EGL/egl.h>
-#include <GLES2/gl2.h>
-
-#include <android/sensor.h>
-#include <android/log.h>
-#include <android_native_app_glue.h>
 
 #include "openglHelper.cpp"
 #include "main.h"
-
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
-#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
+#include "GameEngine.h"
+#include "openglHelper.h"
 
 namespace androidPart {
 
@@ -107,7 +97,6 @@ static int engine_init_display(struct engine* engine) {
     //glShadeModel(GL_SMOOTH);
     glDisable(GL_DEPTH_TEST);
 
-    //initOpengl();
     androng::initOpengl();
 
     return 0;
@@ -298,9 +287,12 @@ void android_main(struct android_app* state) {
 
     // loop waiting for stuff to do.
 
+    androng::GameEngine* gEngine;
+    gEngine = new androng::GameEngine();
     while (1) {
-    	if(processEvents(state, &engine))
-    		return;
+    	//if(processEvents(state, &engine))
+    	//	return;
+		gEngine->runGame(state, &engine);
 		engine_draw_frame(&engine);
     }
 }
