@@ -24,7 +24,7 @@
 
 namespace androidPart {
 
-androng::GameEngine* gameEngine;
+androng::GameEngine* gameEngine = NULL;
 androng::OpenglHelper* openglHelper;
 
 /**
@@ -171,7 +171,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
             // The window is being shown, get it ready.
             if (engine->app->window != NULL) {
                 engine_init_display(engine);
-                engine_draw_frame(engine);
+                //engine_draw_frame(engine);
             }
             break;
         case APP_CMD_TERM_WINDOW:
@@ -289,13 +289,19 @@ void android_main(struct android_app* state) {
     }
 
     // loop waiting for stuff to do.
+    //gameEngine = new androng::GameEngine(openglHelper);
+    //engine_draw_frame(&engine);
+    processEvents(state, &engine);
 
     while (1) {
     	//if(processEvents(state, &engine))
     	//	return;
-    	LOGI("before run game");
-		gameEngine->runGame(state, &engine);
-		engine_draw_frame(&engine);
+
+    	if(gameEngine != NULL){
+        	LOGI("before run game");
+    		gameEngine->runGame(state, &engine);
+    		engine_draw_frame(&engine);
+    	}
     }
 }
 

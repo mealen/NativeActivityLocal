@@ -11,13 +11,14 @@
 namespace androng {
 
 GameEngine::GameEngine(OpenglHelper*& openglHelper) {
+
 	oglHelper = new OpenglHelper();
 
 	openglHelper = oglHelper;
 	relativeSpeed = 1.0f;
 	timeTaken = 1l;
 	startTimer(); // we process by stop/start, so start would be empty the first
-
+	LOGI("engine constructed");
 }
 
 void GameEngine::startTimer() {
