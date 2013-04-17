@@ -5,31 +5,10 @@
  *      Author: Engin Manap
  */
 
-#include <string>
-#include <vector>
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#include <algorithm>
-#include <android/log.h>
-
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
+#include "RacketBar.h"
 
 namespace androng {
-class RacketBar {
-
-private:
-	bool isUserBar;
-	float fYOffset;
-	float* vertexPositionsPointer;
-	int vertexPositionsSize;
-	int elementPerVertex;
-	GLuint theProgram;
-	GLuint positionBufferObject;
-	GLuint positionBufferPointer;
-
-	std::string VSbasic;
-	std::string FSbasic;
-	void initializeVertexShader() {
+	void RacketBar::initializeVertexShader() {
 		VSbasic = "attribute vec4 vPosition;\n"
 				"uniform vec2 offset;"
 				"void main()\n"
@@ -40,7 +19,7 @@ private:
 
 	}
 
-	void initializeFragmentShader() {
+	void RacketBar::initializeFragmentShader() {
 		FSbasic = "precision mediump float;\n"
 		// "uniform vec4 vColor;\n"
 						"void main() {\n"
@@ -48,7 +27,7 @@ private:
 						"}\n";
 	}
 
-	void initializeVertexPositions() {
+	void RacketBar::initializeVertexPositions() {
 		float incomingVertexes[] = { -0.5f, -0.05f, 0.0f, // bottom left
 				0.5f, -0.05f, 0.0f, // bottom right
 				-0.5f, 0.05f, 0.0f, // top
@@ -64,7 +43,7 @@ private:
 
 	}
 
-	GLuint CreateShader(GLenum eShaderType, const std::string &strShaderFile) {
+	GLuint RacketBar::CreateShader(GLenum eShaderType, const std::string &strShaderFile) {
 		GLuint shader = glCreateShader(eShaderType);
 		const char *strFileData = strShaderFile.c_str();
 		glShaderSource(shader, 1, &strFileData, NULL);
@@ -99,7 +78,7 @@ private:
 		return shader;
 	}
 
-	GLuint CreateProgram(const std::vector<GLuint> &shaderList) {
+	GLuint RacketBar::CreateProgram(const std::vector<GLuint> &shaderList) {
 		GLuint program = glCreateProgram();
 
 		for (size_t iLoop = 0; iLoop < shaderList.size(); iLoop++)
@@ -124,7 +103,7 @@ private:
 		return program;
 	}
 
-	void initializeProgram() {
+	void RacketBar::initializeProgram() {
 		std::vector<GLuint> shaderList;
 
 		shaderList.push_back(CreateShader(GL_VERTEX_SHADER, VSbasic));
@@ -135,7 +114,7 @@ private:
 		std::for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
 	}
 
-	void initializeVertexBuffer() {
+	void RacketBar::initializeVertexBuffer() {
 		glGenBuffers(1, &positionBufferObject);
 
 		glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
@@ -144,9 +123,7 @@ private:
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-public:
-
-	RacketBar(bool userBar) {
+	RacketBar::RacketBar(bool userBar) {
 		if(userBar){
 			fYOffset = -0.8f;
 		} else {
@@ -162,7 +139,7 @@ public:
 		positionBufferPointer = glGetAttribLocation(theProgram, "vPosition");
 	}
 
-	void draw(float position) {
+	void RacketBar::draw(float position) {
 
 		glUseProgram(theProgram);
 
@@ -182,7 +159,5 @@ public:
 		glDisableVertexAttribArray(positionBufferPointer);
 		glUseProgram(0);
 	}
-
-};
 
 }

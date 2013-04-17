@@ -18,12 +18,14 @@
 //BEGIN_INCLUDE(all)
 
 
-#include "openglHelper.cpp"
 #include "main.h"
 #include "GameEngine.h"
-#include "openglHelper.h"
+#include "OpenglHelper.h"
 
 namespace androidPart {
+
+androng::GameEngine* gameEngine;
+androng::OpenglHelper* openglHelper;
 
 /**
  * Initialize an EGL context for the current display.
@@ -97,7 +99,7 @@ static int engine_init_display(struct engine* engine) {
     //glShadeModel(GL_SMOOTH);
     glDisable(GL_DEPTH_TEST);
 
-    androng::initOpengl();
+    openglHelper = new androng::OpenglHelper();
 
     return 0;
 }
@@ -113,7 +115,7 @@ static void engine_draw_frame(struct engine* engine) {
     //float temp = 0.3f;
     float temp = static_cast<float>(engine->state.x);
     temp = (temp / engine->width) - 0.5;
-    androng::openglDraw(temp);
+    openglHelper->openglDraw(temp);
 
     eglSwapBuffers(engine->display, engine->surface);
 }

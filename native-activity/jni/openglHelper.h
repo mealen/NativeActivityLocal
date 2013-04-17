@@ -5,23 +5,24 @@
  *      Author: engin
  */
 
-
-
 #ifndef OPENGLHELPER_H_
 #define OPENGLHELPER_H_
 
-#include "RacketBar.cpp"
-#include "ball.cpp"
+#include "RacketBar.h"
+#include "Ball.h"
 
 namespace androng {
 
-RacketBar *rbUser;
-RacketBar *rbCPU;
-Ball *ball;
+class OpenglHelper {
+private:
+	RacketBar *rbUser;
+	RacketBar *rbCPU;
+	Ball *ball;
+public:
 
-
-void initOpengl();
-void openglDraw(float);
+	OpenglHelper();
+	void openglDraw(float);
+};
 
 }
 #endif /* OPENGLHELPER_H_ */

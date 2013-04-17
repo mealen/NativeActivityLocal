@@ -5,14 +5,8 @@
  *      Author: Engin Manap
  */
 
-#include <string>
-#include <vector>
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#include <algorithm>
-#include <android/log.h>
-#include  <math.h>
 
+#include "Ball.h"
 
 
 #define PI 3.14159265
@@ -21,22 +15,7 @@
 
 namespace androng {
 
-
-class Ball {
-
-private:
-	float fXOffset;
-	float fYOffset;
-	float* vertexPositionsPointer;
-	int elementPerVertex;
-	int vertexPositionsSize;
-	GLuint theProgram;
-	GLuint positionBufferObject;
-	GLuint positionBufferPointer;
-
-	std::string VSbasic;
-	std::string FSbasic;
-	void initializeVertexShader() {
+	void Ball::initializeVertexShader() {
 		VSbasic = "attribute vec4 vPosition;\n"
 				"uniform vec2 offset;"
 				"void main()\n"
@@ -47,7 +26,7 @@ private:
 
 	}
 
-	void initializeFragmentShader() {
+	void Ball::initializeFragmentShader() {
 		FSbasic = "precision mediump float;\n"
 		// "uniform vec4 vColor;\n"
 						"void main() {\n"
@@ -55,7 +34,7 @@ private:
 						"}\n";
 	}
 
-	void initializeVertexPositions() {
+	void Ball::initializeVertexPositions() {
 		float ballRadius = 0.1;
 		int ballVertexCount = 16;
 		float ballElementAngle = 3.14159265 / ballVertexCount;
@@ -83,7 +62,7 @@ private:
 
 	}
 
-	GLuint CreateShader(GLenum eShaderType, const std::string &strShaderFile) {
+	GLuint Ball::CreateShader(GLenum eShaderType, const std::string &strShaderFile) {
 		GLuint shader = glCreateShader(eShaderType);
 		const char *strFileData = strShaderFile.c_str();
 		glShaderSource(shader, 1, &strFileData, NULL);
@@ -118,7 +97,7 @@ private:
 		return shader;
 	}
 
-	GLuint CreateProgram(const std::vector<GLuint> &shaderList) {
+	GLuint Ball::CreateProgram(const std::vector<GLuint> &shaderList) {
 		GLuint program = glCreateProgram();
 
 		for (size_t iLoop = 0; iLoop < shaderList.size(); iLoop++)
@@ -143,7 +122,7 @@ private:
 		return program;
 	}
 
-	void initializeProgram() {
+	void Ball::initializeProgram() {
 		std::vector<GLuint> shaderList;
 
 		shaderList.push_back(CreateShader(GL_VERTEX_SHADER, VSbasic));
@@ -154,7 +133,7 @@ private:
 		std::for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
 	}
 
-	void initializeVertexBuffer() {
+	void Ball::initializeVertexBuffer() {
 		glGenBuffers(1, &positionBufferObject);
 
 		glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
@@ -163,9 +142,9 @@ private:
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-public:
 
-	Ball() {
+
+	Ball::Ball() {
 		fXOffset = 0.0f;
 		fYOffset = 0.0f;
 
@@ -178,7 +157,7 @@ public:
 		positionBufferPointer = glGetAttribLocation(theProgram, "vPosition");
 	}
 
-	void draw(float xPosition, float yPosition) {
+	void Ball::draw(float xPosition, float yPosition) {
 
 		glUseProgram(theProgram);
 
@@ -196,7 +175,5 @@ public:
 		glDisableVertexAttribArray(positionBufferPointer);
 		glUseProgram(0);
 	}
-
-};
 
 }
