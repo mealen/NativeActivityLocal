@@ -10,6 +10,8 @@
 
 #include "time.h"
 #include "main.h"
+#include "OpenglHelper.h"
+
 #define DESIRED_FPS 60.0f
 
 
@@ -22,13 +24,14 @@ private:
 	timespec tsStart, tsStop;
 	long timeTaken;
 	float relativeSpeed;
+	OpenglHelper* oglHelper;
 
 	void game(androidPart::engine *androidEngine);
 	void drawFrame(androidPart::engine *androidEngine);
 
 public:
 
-	GameEngine();
+	GameEngine(OpenglHelper*&);
 	void runGame(android_app *state, androidPart::engine *androidEngine);
 	void startTimer();
 	void stopTimer();

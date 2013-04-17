@@ -98,8 +98,8 @@ static int engine_init_display(struct engine* engine) {
     //glEnable(GL_CULL_FACE);
     //glShadeModel(GL_SMOOTH);
     glDisable(GL_DEPTH_TEST);
-
-    openglHelper = new androng::OpenglHelper();
+    gameEngine = new androng::GameEngine(openglHelper);
+    //openglHelper = new androng::OpenglHelper();
 
     return 0;
 }
@@ -112,6 +112,7 @@ static void engine_draw_frame(struct engine* engine) {
         // No display.
         return;
     }
+    LOGI("render frame");
     //float temp = 0.3f;
     float temp = static_cast<float>(engine->state.x);
     temp = (temp / engine->width) - 0.5;
@@ -289,12 +290,11 @@ void android_main(struct android_app* state) {
 
     // loop waiting for stuff to do.
 
-    androng::GameEngine* gEngine;
-    gEngine = new androng::GameEngine();
     while (1) {
     	//if(processEvents(state, &engine))
     	//	return;
-		gEngine->runGame(state, &engine);
+    	LOGI("before run game");
+		gameEngine->runGame(state, &engine);
 		engine_draw_frame(&engine);
     }
 }

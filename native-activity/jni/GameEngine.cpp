@@ -10,10 +10,14 @@
 
 namespace androng {
 
-GameEngine::GameEngine() {
+GameEngine::GameEngine(OpenglHelper*& openglHelper) {
+	oglHelper = new OpenglHelper();
+
+	openglHelper = oglHelper;
 	relativeSpeed = 1.0f;
-	timeTaken = 0;
-	//initOpengl();
+	timeTaken = 1l;
+	startTimer(); // we process by stop/start, so start would be empty the first
+
 }
 
 void GameEngine::startTimer() {
@@ -28,23 +32,30 @@ void GameEngine::stopTimer() {
 void GameEngine::runGame(android_app *state,
 		androidPart::engine *androidEngine) {
 	//while (0 == 0) {
+	LOGI("before process events");
 	androidPart::processEvents(state, androidEngine);
+	LOGI("after process events");
 	game(androidEngine);
 	//}
 }
 
 void GameEngine::game(androidPart::engine *androidEngine) {
+	LOGI("1 time taken is %ld", &time);
+	stopTimer();
+	LOGI("2 time taken is %ld", &time);
+	startTimer();
+	LOGI("3 time taken is %ld", &time);
 //how many times in a sec are we drawing?
 	timeTaken = 10e6 / timeTaken;
+	LOGI("4 time taken is %ld", &time);
 //calculate speed relative to what we desired
 	relativeSpeed = DESIRED_FPS / timeTaken;
 //we should multiply any movement with relative speed, this way game works same speed in all environments.
 	//androidPart::processEvents(state, androidEngine);
 //androidPart::processEvents(state, engine);
 	//drawFrame(androidEngine);
-	stopTimer();
-	startTimer();
-	LOGI("time for frame is %ld", timeTaken);
+
+	LOGI(" 5 time for frame is %ld", timeTaken);
 }
 
 void GameEngine::drawFrame(androidPart::engine * androidEngine) {
