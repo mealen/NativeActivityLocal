@@ -28,15 +28,31 @@ namespace androng {
 	}
 
 	void RacketBar::initializeVertexPositions() {
-		float incomingVertexes[] = { -0.5f, -0.05f, 0.0f, // bottom left
-				0.5f, -0.05f, 0.0f, // bottom right
-				-0.5f, 0.05f, 0.0f, // top
-				0.5f, 0.05, 0.0f // top
-				};
+		float incomingVertexes[] = {
+				0.5f, 0.05f, -0.05f, 	// F
+				-0.5f, 0.05f, -0.05f, 	// E
+				0.5f, 0.05f, 0.05f,		// B
+				-0.5f, 0.05f, 0.05f,	// A
+				-0.5f, -0.05f, 0.05f,	// C
+				-0.5f, 0.05f, -0.05f, 	// E
+				-0.5f, -0.05f, -0.05f, 	// G
+				0.5f, -0.05f, -0.05f, 	// H
+				-0.5f, -0.05f, 0.05f,	// C
+				0.5f, -0.05f, 0.05f,	// D
+				0.5f, 0.05f, 0.05f,		// B
+				0.5f, -0.05f, -0.05f, 	// H
+				0.5f, 0.05f, -0.05f, 	// F
+				-0.5f, 0.05f, -0.05f 	// E
+		};
 
+		/*float incomingVertexes[] = { -0.5f, -0.05f, 0.0f, // bottom left
+				0.5f, -0.05f, 0.0f, // bottom right
+				-0.5f, 0.05f, 0.0f, // top left
+				0.5f, 0.05, 0.0f // top right
+				};
+*/
 		elementPerVertex = 3;
 		vertexPositionsSize = sizeof(incomingVertexes);
-
 		vertexPositionsPointer = (float*) malloc(vertexPositionsSize);
 		memcpy(vertexPositionsPointer, incomingVertexes, vertexPositionsSize);
 		vertexPositionsSize = vertexPositionsSize / sizeof(float);
