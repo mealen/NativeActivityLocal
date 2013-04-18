@@ -12,6 +12,12 @@
 namespace androng {
 
 OpenglHelper::OpenglHelper() {
+    // Initialize GL state.
+    //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+    //glEnable(GL_CULL_FACE);
+    //glShadeModel(GL_SMOOTH);
+    glDisable(GL_DEPTH_TEST);
+
 	rbUser = new RacketBar(true);
 	rbCPU = new RacketBar(false);
 	ball = new Ball();

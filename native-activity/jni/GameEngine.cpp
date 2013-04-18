@@ -10,15 +10,22 @@
 
 namespace androng {
 
-GameEngine::GameEngine(OpenglHelper*& openglHelper) {
+GameEngine::GameEngine(android_app *state, androidPart::engine *androidEngine) {
+	this->state = state;
+	this->androidEngine = androidEngine;
+	relativeSpeed = 1.0f;
+	timeTaken = 1l;
+	startTimer(); // we process by stop/start, so start would be empty the first
+
+}
+
+void GameEngine::initOpengl(OpenglHelper*& openglHelper){
 
 	oglHelper = new OpenglHelper();
 
 	openglHelper = oglHelper;
-	relativeSpeed = 1.0f;
-	timeTaken = 1l;
-	startTimer(); // we process by stop/start, so start would be empty the first
-	LOGI("engine constructed");
+	//draw 1 frame
+	drawFrame();
 }
 
 void GameEngine::startTimer() {
@@ -30,36 +37,29 @@ void GameEngine::stopTimer() {
 	timeTaken = tsStop.tv_nsec - tsStart.tv_nsec;
 }
 
-void GameEngine::runGame(android_app *state,
-		androidPart::engine *androidEngine) {
+void GameEngine::runGame() {
 	//while (0 == 0) {
-	LOGI("before process events");
-	androidPart::processEvents(state, androidEngine);
-	LOGI("after process events");
-	game(androidEngine);
+	if(androidPart::processEvents(state, androidEngine))
+		return;
+	game();
 	//}
 }
 
-void GameEngine::game(androidPart::engine *androidEngine) {
-	LOGI("1 time taken is %ld", &time);
+void GameEngine::game() {
 	stopTimer();
-	LOGI("2 time taken is %ld", &time);
 	startTimer();
-	LOGI("3 time taken is %ld", &time);
 //how many times in a sec are we drawing?
 	timeTaken = 10e6 / timeTaken;
-	LOGI("4 time taken is %ld", &time);
+
 //calculate speed relative to what we desired
 	relativeSpeed = DESIRED_FPS / timeTaken;
 //we should multiply any movement with relative speed, this way game works same speed in all environments.
-	//androidPart::processEvents(state, androidEngine);
-//androidPart::processEvents(state, engine);
-	//drawFrame(androidEngine);
 
-	LOGI(" 5 time for frame is %ld", timeTaken);
+	drawFrame();
+
 }
 
-void GameEngine::drawFrame(androidPart::engine * androidEngine) {
+void GameEngine::drawFrame() {
 	if (androidEngine->display == NULL) {
 // No display.
 		return;
@@ -67,7 +67,7 @@ void GameEngine::drawFrame(androidPart::engine * androidEngine) {
 //float temp = 0.3f;
 	float temp = static_cast<float>(androidEngine->state.x);
 	temp = (temp / androidEngine->width) - 0.5;
-	//openglDraw(temp);
+	oglHelper->openglDraw(temp);
 
 	eglSwapBuffers(androidEngine->display, androidEngine->surface);
 }

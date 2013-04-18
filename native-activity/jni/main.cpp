@@ -20,11 +20,11 @@
 
 #include "main.h"
 #include "GameEngine.h"
-#include "OpenglHelper.h"
+
 
 namespace androidPart {
 
-androng::GameEngine* gameEngine = NULL;
+androng::GameEngine* gameEngine;
 androng::OpenglHelper* openglHelper;
 
 /**
@@ -93,12 +93,7 @@ static int engine_init_display(struct engine* engine) {
     engine->height = h;
     engine->state.angle = 0;
 
-    // Initialize GL state.
-    //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-    //glEnable(GL_CULL_FACE);
-    //glShadeModel(GL_SMOOTH);
-    glDisable(GL_DEPTH_TEST);
-    gameEngine = new androng::GameEngine(openglHelper);
+    gameEngine->initOpengl(openglHelper);
     //openglHelper = new androng::OpenglHelper();
 
     return 0;
@@ -108,6 +103,7 @@ static int engine_init_display(struct engine* engine) {
  * Just the current frame in the display.
  */
 static void engine_draw_frame(struct engine* engine) {
+	/*
     if (engine->display == NULL) {
         // No display.
         return;
@@ -118,7 +114,7 @@ static void engine_draw_frame(struct engine* engine) {
     temp = (temp / engine->width) - 0.5;
     openglHelper->openglDraw(temp);
 
-    eglSwapBuffers(engine->display, engine->surface);
+    eglSwapBuffers(engine->display, engine->surface);*/
 }
 
 /**
@@ -171,7 +167,6 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
             // The window is being shown, get it ready.
             if (engine->app->window != NULL) {
                 engine_init_display(engine);
-                //engine_draw_frame(engine);
             }
             break;
         case APP_CMD_TERM_WINDOW:
@@ -197,7 +192,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
             }
             // Also stop animating.
             engine->animating = 0;
-            engine_draw_frame(engine);
+            //engine_draw_frame(engine);
             break;
     }
 }
@@ -251,7 +246,6 @@ bool processEvents(android_app* state, androidPart::engine* androidEngine){
 
         // Drawing is throttled to the screen update rate, so there
         // is no need to do timing here.
-        //engine_draw_frame(androidEngine);
     }
     return false;
 }
@@ -288,20 +282,13 @@ void android_main(struct android_app* state) {
         engine.state = *(struct saved_state*)state->savedState;
     }
 
+    gameEngine = new androng::GameEngine(state, &engine);
     // loop waiting for stuff to do.
-    //gameEngine = new androng::GameEngine(openglHelper);
-    //engine_draw_frame(&engine);
-    processEvents(state, &engine);
 
     while (1) {
     	//if(processEvents(state, &engine))
     	//	return;
-
-    	if(gameEngine != NULL){
-        	LOGI("before run game");
-    		gameEngine->runGame(state, &engine);
-    		engine_draw_frame(&engine);
-    	}
+		gameEngine->runGame();
     }
 }
 

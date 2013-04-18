@@ -21,18 +21,22 @@ namespace androng {
 
 class GameEngine {
 private:
+	android_app* state;
+	androidPart::engine* androidEngine;
+
+
 	timespec tsStart, tsStop;
 	long timeTaken;
 	float relativeSpeed;
 	OpenglHelper* oglHelper;
 
-	void game(androidPart::engine *androidEngine);
-	void drawFrame(androidPart::engine *androidEngine);
+	void game();
+	void drawFrame();
 
 public:
-
-	GameEngine(OpenglHelper*&);
-	void runGame(android_app *state, androidPart::engine *androidEngine);
+	void initOpengl(OpenglHelper*&);
+	GameEngine(android_app *state, androidPart::engine *androidEngine);
+	void runGame();
 	void startTimer();
 	void stopTimer();
 };
