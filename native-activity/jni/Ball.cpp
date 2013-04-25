@@ -89,8 +89,10 @@ namespace androng {
 				break;
 			}
 
-			fprintf(stderr, "Compile failure in %s shader:\n%s\n",
+			/*fprintf(stderr, "Compile failure in %s shader:\n%s\n",
 					strShaderType, strInfoLog);
+					*/
+			LOGI("Compile failure in %s shader:\n%s\n", strShaderType, strInfoLog);
 			delete[] strInfoLog;
 		}
 

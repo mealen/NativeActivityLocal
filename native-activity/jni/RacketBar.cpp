@@ -8,6 +8,7 @@
 #include "RacketBar.h"
 
 namespace androng {
+/*
 	void RacketBar::initializeVertexShader() {
 		VSbasic = "attribute vec4 vPosition;\n"
 				"uniform vec2 offset;"
@@ -17,6 +18,27 @@ namespace androng {
 				" gl_Position = vPosition + totalOffset;\n"
 				"}\n";
 
+	}
+	*/
+	void RacketBar::initializeVertexShader(){
+		VSbasic = "attribute vec4 vPosition;\n"
+		"uniform vec2 offset;\n"
+		"\n"
+		"void main()\n"
+		"{\n"
+			"vec4 cameraPos = vPosition + vec4(offset.x, offset.y, 0.0, 0.0);\n"
+			"vec4 clipPos;\n"
+			"\n"
+			"clipPos.x = cameraPos.x;\n"
+			"clipPos.y = cameraPos.y;\n"
+			"\n"
+			"clipPos.z = cameraPos.z * (1.0 + 3.0) / (1.0 - 3.0);\n"
+			"clipPos.z += 2.0 * 3.0 / (1.0 - 3.0);\n"
+			"\n"
+			"clipPos.w = -cameraPos.z;\n"
+			"\n"
+			"gl_Position = clipPos;\n"
+		"}\n";
 	}
 
 	void RacketBar::initializeFragmentShader() {
@@ -29,20 +51,20 @@ namespace androng {
 
 	void RacketBar::initializeVertexPositions() {
 		float incomingVertexes[] = {
-				0.5f, 0.05f, -0.05f, 	// F
-				-0.5f, 0.05f, -0.05f, 	// E
-				0.5f, 0.05f, 0.05f,		// B
-				-0.5f, 0.05f, 0.05f,	// A
-				-0.5f, -0.05f, 0.05f,	// C
-				-0.5f, 0.05f, -0.05f, 	// E
-				-0.5f, -0.05f, -0.05f, 	// G
-				0.5f, -0.05f, -0.05f, 	// H
-				-0.5f, -0.05f, 0.05f,	// C
-				0.5f, -0.05f, 0.05f,	// D
-				0.5f, 0.05f, 0.05f,		// B
-				0.5f, -0.05f, -0.05f, 	// H
-				0.5f, 0.05f, -0.05f, 	// F
-				-0.5f, 0.05f, -0.05f 	// E
+				 0.5f,  0.05f, -1.15f, 	// F
+				-0.5f,  0.05f, -1.15f, 	// E
+				 0.5f,  0.05f, -1.05f,	// B
+				-0.5f,  0.05f, -1.15f,	// A
+				-0.5f, -0.05f, -1.05f,	// C
+				-0.5f,  0.05f, -1.15f, 	// E
+				-0.5f, -0.05f, -1.15f, 	// G
+				 0.5f, -0.05f, -1.15f, 	// H
+				-0.5f, -0.05f, -1.05f,	// C
+				 0.5f, -0.05f, -1.05f,	// D
+				 0.5f,  0.05f, -1.05f,	// B
+				 0.5f, -0.05f, -1.15f, 	// H
+				 0.5f,  0.05f, -1.15f, 	// F
+				-0.5f,  0.05f, -1.15f 	// E
 		};
 
 		/*float incomingVertexes[] = { -0.5f, -0.05f, 0.0f, // bottom left
@@ -86,8 +108,10 @@ namespace androng {
 				break;
 			}
 
-			fprintf(stderr, "Compile failure in %s shader:\n%s\n",
+			/*fprintf(stderr, "Compile failure in %s shader:\n%s\n",
 					strShaderType, strInfoLog);
+					*/
+			LOGI("Compile failure in %s shader:\n%s\n", strShaderType, strInfoLog);
 			delete[] strInfoLog;
 		}
 
@@ -157,9 +181,19 @@ namespace androng {
 
 	void RacketBar::draw(float position) {
 
+		/*
+		"attribute vec4 vPosition;\n"
+		"\n"
+		"uniform vec2 offset;\n"
+		"uniform float zNear;\n"
+		"uniform float zFar;\n"
+		"uniform float frustumScale;\n"
+		 */
+
 		glUseProgram(theProgram);
 
 		GLint offsetLocation = glGetUniformLocation(theProgram, "offset");
+
 
 		glUniform2f(offsetLocation, position, fYOffset);
 
