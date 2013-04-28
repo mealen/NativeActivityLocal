@@ -27,12 +27,13 @@ private:
 	float* vertexPositionsPointer;
 	int vertexPositionsSize;
 	int elementPerVertex;
-	GLuint theProgram;
+	GLuint _racketbarGLSLProgram;
 	GLuint positionBufferObject;
 	GLuint positionBufferPointer;
+	GLuint colorInputPointer;
 
-	std::string VSbasic;
-	std::string FSbasic;
+	std::string VSRacketbarbasic;
+	std::string FSRacketbarbasic;
 	void initializeVertexShader();
 	void initializeFragmentShader();
 	void initializeVertexPositions();

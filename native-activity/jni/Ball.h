@@ -30,7 +30,7 @@ private:
 	float* vertexPositionsPointer;
 	int elementPerVertex;
 	int vertexPositionsSize;
-	GLuint theProgram;
+	GLuint _ballGLSLProgram;
 	GLuint positionBufferObject;
 	GLuint positionBufferPointer;
 

@@ -16,22 +16,28 @@
 namespace androng {
 
 	void Ball::initializeVertexShader() {
-		VSbasic = "attribute vec4 vPosition;\n"
-				"uniform vec2 offset;"
+		VSbasic =
+				"attribute vec4 vPosition;\n"
+				"varying mediump vec4 outputColor;\n"
+				"uniform vec2 offset;\n"
 				"void main()\n"
 				"{\n"
 				"vec4 totalOffset = vec4(offset.x, offset.y, 0.0, 0.0);\n"
-				" gl_Position = vPosition + totalOffset;\n"
+				"outputColor = vec4(totalOffset.z, totalOffset.z, totalOffset.z, 0);\n"
+				"gl_Position = vPosition + totalOffset;\n"
 				"}\n";
 
 	}
 
 	void Ball::initializeFragmentShader() {
-		FSbasic = "precision mediump float;\n"
-		// "uniform vec4 vColor;\n"
-						"void main() {\n"
-						" gl_FragColor = vec4 ( 0.5, 0.5, 0.5, 1.0 );\n"
-						"}\n";
+		FSbasic =
+				"varying mediump vec4 outputColor;\n"
+				"precision mediump float;\n"
+				// "uniform vec4 vColor;\n"
+				"void main() {\n"
+					"vec4 originalColor = vec4 ( 0.5, 0.5, 0.5, 1.0 );\n"
+					"gl_FragColor = originalColor + outputColor;\n"
+				"}\n";
 	}
 
 	void Ball::initializeVertexPositions() {
@@ -127,10 +133,10 @@ namespace androng {
 	void Ball::initializeProgram() {
 		std::vector<GLuint> shaderList;
 
-		shaderList.push_back(CreateShader(GL_VERTEX_SHADER, VSbasic));
-		shaderList.push_back(CreateShader(GL_FRAGMENT_SHADER, FSbasic));
+		shaderList.push_back(CreateShader(GL_VERTEX_SHADER, this->VSbasic));
+		shaderList.push_back(CreateShader(GL_FRAGMENT_SHADER, this->FSbasic));
 
-		theProgram = CreateProgram(shaderList);
+		_ballGLSLProgram = CreateProgram(shaderList);
 
 		std::for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
 	}
@@ -156,14 +162,14 @@ namespace androng {
 		initializeVertexPositions();
 		initializeVertexBuffer();
 
-		positionBufferPointer = glGetAttribLocation(theProgram, "vPosition");
+		positionBufferPointer = glGetAttribLocation(_ballGLSLProgram, "vPosition");
 	}
 
 	void Ball::draw(float xPosition, float yPosition) {
 
-		glUseProgram(theProgram);
+		glUseProgram(_ballGLSLProgram);
 
-		GLint offsetLocation = glGetUniformLocation(theProgram, "offset");
+		GLint offsetLocation = glGetUniformLocation(_ballGLSLProgram, "offset");
 
 		glUniform2f(offsetLocation, xPosition, yPosition);
 
