@@ -27,6 +27,7 @@ private:
 	float* vertexPositionsPointer;
 	int vertexPositionsSize;
 	int elementPerVertex;
+	float perspectiveMatrix[16];
 	GLuint _racketbarGLSLProgram;
 	GLuint positionBufferObject;
 	GLuint positionBufferPointer;
@@ -37,6 +38,7 @@ private:
 	void initializeVertexShader();
 	void initializeFragmentShader();
 	void initializeVertexPositions();
+	void initializePerspectiveMatrix();
 	GLuint CreateShader(GLenum eShaderType, const std::string &strShaderFile);
 	GLuint CreateProgram(const std::vector<GLuint> &shaderList);
 	void initializeProgram();

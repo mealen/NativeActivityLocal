@@ -26,31 +26,14 @@ void RacketBar::initializeVertexShader() {
 			"attribute vec4 vPosition;\n"
 			"attribute vec4 vColor;\n"
 			"varying mediump vec4 outputColor;\n"
-			"uniform float zNear;\n"
-			"uniform float zFar;\n"
-			"uniform float frustumScale;\n"
-
+			"uniform mat4 perspectiveMatrix;\n"
 			"uniform vec2 offset;\n"
 			"\n"
 			"void main()\n"
 			"{\n"
 			"vec4 cameraPos = vPosition + vec4(offset.x, offset.y, 0.0, 0.0);\n"
-			"vec4 clipPos;\n"
-			"\n"
-			"clipPos.xy = cameraPos.xy * frustumScale;\n"
-			//"clipPos.y = cameraPos.y;\n"
-			"\n"
-			"clipPos.z = cameraPos.z * (zNear + zFar) / (zNear - zFar);\n"
-			"clipPos.z += 2.0 * zFar * zNear / (zNear - zFar);\n"
-			"\n"
-			"clipPos.w = -cameraPos.z;\n"
-			"\n"
-			//possible cameraPos.z = {-1.15, -1.05}
-			//these values are invalid, we should add 1.5
-			//"outputColor = vec4(0.0 ,(cameraPos.z + 1.15) * 5.0, 0.0, 1.0);\n"
-			//"outputColor = vec4(0.8, 0.0, 0.0, 1.0);\n"
 			"outputColor = vColor;"
-			"gl_Position = clipPos;\n"
+			"gl_Position = perspectiveMatrix * cameraPos;\n"
 			"}\n";
 }
 
@@ -219,6 +202,20 @@ void RacketBar::initializeVertexBuffer() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+void RacketBar::initializePerspectiveMatrix(){
+	float fFrustumScale = 1.0f; //these three should be changed.
+	float fzNear = 0.5f;
+	float fzFar = 3.0f;
+
+	memset(perspectiveMatrix, 0, sizeof(perspectiveMatrix)); //set 0 to all elements.
+	perspectiveMatrix[0] = fFrustumScale;
+	perspectiveMatrix[5] = fFrustumScale;
+	perspectiveMatrix[10] = (fzFar + fzNear) / (fzNear - fzFar);
+	perspectiveMatrix[11] = -1.0f;
+	perspectiveMatrix[14] = (2 * fzFar * fzNear) / (fzNear - fzFar);
+
+}
+
 RacketBar::RacketBar(bool userBar) {
 	if (userBar) {
 		fYOffset = -0.8f;
@@ -231,6 +228,7 @@ RacketBar::RacketBar(bool userBar) {
 	initializeProgram();
 	initializeVertexPositions();
 	initializeVertexBuffer();
+	initializePerspectiveMatrix();
 
 	positionBufferPointer = glGetAttribLocation(_racketbarGLSLProgram, "vPosition");
 	colorInputPointer = glGetAttribLocation(_racketbarGLSLProgram, "vColor");
@@ -252,12 +250,9 @@ void RacketBar::draw(float position) {
 	GLint offsetLocation = glGetUniformLocation(_racketbarGLSLProgram, "offset");
 	glUniform2f(offsetLocation, position, fYOffset);
 
-	GLint nearLocation = glGetUniformLocation(_racketbarGLSLProgram, "zNear");
-	GLint farLocation = glGetUniformLocation(_racketbarGLSLProgram, "zFar");
-	GLint scaleLocation = glGetUniformLocation(_racketbarGLSLProgram, "frustumScale");
-	glUniform1f(nearLocation, 1.0f);
-	glUniform1f(farLocation, 3.0f);
-	glUniform1f(scaleLocation, 1.0f);
+	GLint perspectiveMatrixLocation = glGetUniformLocation(_racketbarGLSLProgram, "perspectiveMatrix");
+
+	glUniformMatrix4fv(perspectiveMatrixLocation, 1, GL_FALSE, perspectiveMatrix);
 
 	glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
 	glEnableVertexAttribArray(positionBufferPointer);
