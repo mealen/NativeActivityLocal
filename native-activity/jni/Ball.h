@@ -37,15 +37,18 @@ private:
 	std::string VSbasic;
 	std::string FSbasic;
 
+	float perspectiveMatrix[16];
+
 	void initializeVertexShader();
 	void initializeFragmentShader();
 	void initializeVertexPositions();
+	void initializePerspectiveMatrix(int, int);
 	GLuint CreateShader(GLenum eShaderType, const std::string &strShaderFile);
 	GLuint CreateProgram(const std::vector<GLuint> &shaderList);
 	void initializeProgram();
 	void initializeVertexBuffer();
 public:
-	Ball();
+	Ball(int, int);
 	void draw(float, float);
 };
 

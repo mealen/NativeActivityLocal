@@ -22,7 +22,7 @@ OpenglHelper::OpenglHelper(int viewHeight, int viewWidth) {
 
 	rbUser = new RacketBar(true, viewHeight, viewWidth);
 	rbCPU = new RacketBar(false, viewHeight, viewWidth);
-	ball = new Ball();
+	ball = new Ball(viewHeight, viewWidth);
 }
 
 void OpenglHelper::openglDraw(float bottomRacketPosition) {

@@ -172,7 +172,8 @@ GLuint RacketBar::CreateProgram(const std::vector<GLuint> &shaderList) {
 
 		GLchar *strInfoLog = new GLchar[infoLogLength + 1];
 		glGetProgramInfoLog(racketGLSLProgram, infoLogLength, NULL, strInfoLog);
-		fprintf(stderr, "Linker failure: %s\n", strInfoLog);
+		//fprintf(stderr, "Linker failure: %s\n", strInfoLog);
+		LOGI("Linker failure: %s\n", strInfoLog);
 		delete[] strInfoLog;
 	}
 
