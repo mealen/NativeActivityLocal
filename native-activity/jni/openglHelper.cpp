@@ -11,7 +11,7 @@
 
 namespace androng {
 
-OpenglHelper::OpenglHelper() {
+OpenglHelper::OpenglHelper(int viewHeight, int viewWidth) {
     // Initialize GL state.
     //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
     //glEnable(GL_CULL_FACE);
@@ -20,16 +20,16 @@ OpenglHelper::OpenglHelper() {
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
 
-	rbUser = new RacketBar(true);
-	rbCPU = new RacketBar(false);
+	rbUser = new RacketBar(true, viewHeight, viewWidth);
+	rbCPU = new RacketBar(false, viewHeight, viewWidth);
 	ball = new Ball();
 }
 
-void OpenglHelper::openglDraw(float position) {
+void OpenglHelper::openglDraw(float bottomRacketPosition) {
 	glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	//RacketBar rb;
-	rbUser->draw(position);
+	rbUser->draw(bottomRacketPosition);
 	rbCPU->draw(0.25);
 	ball->draw(0, 0);
 }

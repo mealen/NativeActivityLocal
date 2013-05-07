@@ -38,14 +38,14 @@ private:
 	void initializeVertexShader();
 	void initializeFragmentShader();
 	void initializeVertexPositions();
-	void initializePerspectiveMatrix();
+	void initializePerspectiveMatrix(int, int);
 	GLuint CreateShader(GLenum eShaderType, const std::string &strShaderFile);
 	GLuint CreateProgram(const std::vector<GLuint> &shaderList);
 	void initializeProgram();
 	void initializeVertexBuffer();
 
 public:
-	RacketBar(bool);
+	RacketBar(bool, int, int);
 	void draw(float);
 
 };

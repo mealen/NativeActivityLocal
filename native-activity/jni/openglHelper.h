@@ -20,7 +20,7 @@ private:
 	Ball *ball;
 public:
 
-	OpenglHelper();
+	OpenglHelper(int, int);
 	void openglDraw(float);
 };
 

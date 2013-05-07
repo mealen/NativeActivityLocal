@@ -21,7 +21,7 @@ GameEngine::GameEngine(android_app *state, androidPart::engine *androidEngine) {
 
 void GameEngine::initOpengl(OpenglHelper*& openglHelper){
 
-	oglHelper = new OpenglHelper();
+	oglHelper = new OpenglHelper(this->androidEngine->height, this->androidEngine->width);
 
 	openglHelper = oglHelper;
 	//draw 1 frame

@@ -202,21 +202,31 @@ void RacketBar::initializeVertexBuffer() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void RacketBar::initializePerspectiveMatrix(){
-	float fFrustumScale = 1.0f; //these three should be changed.
+void RacketBar::initializePerspectiveMatrix(int height, int width){
+	float fxFrustumScale = 1.0f;
+	float fyFrustumScale = 1.0f;
 	float fzNear = 0.5f;
 	float fzFar = 3.0f;
 
+	if(height > width){
+		//x is bigger, so we will scale x.
+		fxFrustumScale = (float)height / (float)width;
+	} else {
+		//y is bigger, scale y
+		fyFrustumScale = (float)width / (float)height;
+
+	}
+
 	memset(perspectiveMatrix, 0, sizeof(perspectiveMatrix)); //set 0 to all elements.
-	perspectiveMatrix[0] = fFrustumScale;
-	perspectiveMatrix[5] = fFrustumScale;
+	perspectiveMatrix[0] = fxFrustumScale;
+	perspectiveMatrix[5] = fyFrustumScale;
 	perspectiveMatrix[10] = (fzFar + fzNear) / (fzNear - fzFar);
 	perspectiveMatrix[11] = -1.0f;
 	perspectiveMatrix[14] = (2 * fzFar * fzNear) / (fzNear - fzFar);
 
 }
 
-RacketBar::RacketBar(bool userBar) {
+RacketBar::RacketBar(bool userBar, int height, int width) {
 	if (userBar) {
 		fYOffset = -0.8f;
 	} else {
@@ -228,7 +238,7 @@ RacketBar::RacketBar(bool userBar) {
 	initializeProgram();
 	initializeVertexPositions();
 	initializeVertexBuffer();
-	initializePerspectiveMatrix();
+	initializePerspectiveMatrix(height, width);
 
 	positionBufferPointer = glGetAttribLocation(_racketbarGLSLProgram, "vPosition");
 	colorInputPointer = glGetAttribLocation(_racketbarGLSLProgram, "vColor");
