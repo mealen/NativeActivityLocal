@@ -17,8 +17,9 @@ OpenglHelper::OpenglHelper(int viewHeight, int viewWidth) {
     //glEnable(GL_CULL_FACE);
     //glShadeModel(GL_SMOOTH);
     //glDisable(GL_DEPTH_TEST);
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
+    //glEnable(GL_DEPTH_TEST);
+    //glDepthMask(GL_TRUE);
+	glDisable(GL_CULL_FACE);
 
 	rbUser = new RacketBar(true, viewHeight, viewWidth);
 	rbCPU = new RacketBar(false, viewHeight, viewWidth);

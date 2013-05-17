@@ -67,6 +67,7 @@ void GameEngine::drawFrame() {
 //float temp = 0.3f;
 	float temp = static_cast<float>(androidEngine->state.x);
 	temp = (temp / androidEngine->width) - 0.5;
+	temp = temp * 2;
 	oglHelper->openglDraw(temp);
 
 	eglSwapBuffers(androidEngine->display, androidEngine->surface);
