@@ -100,24 +100,6 @@ static int engine_init_display(struct engine* engine) {
 }
 
 /**
- * Just the current frame in the display.
- */
-static void engine_draw_frame(struct engine* engine) {
-	/*
-    if (engine->display == NULL) {
-        // No display.
-        return;
-    }
-    LOGI("render frame");
-    //float temp = 0.3f;
-    float temp = static_cast<float>(engine->state.x);
-    temp = (temp / engine->width) - 0.5;
-    openglHelper->openglDraw(temp);
-
-    eglSwapBuffers(engine->display, engine->surface);*/
-}
-
-/**
  * Tear down the EGL context currently associated with the display.
  */
 static void engine_term_display(struct engine* engine) {
