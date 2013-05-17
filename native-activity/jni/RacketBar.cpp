@@ -48,75 +48,53 @@ void RacketBar::initializeFragmentShader() {
 
 void RacketBar::initializeVertexPositions() {
 	float incomingVertexes[] = {
-			 0.5f,  0.05f, -1.25f, // F
-			-0.5f,  0.05f, -1.25f, // E
-			 0.5f,  0.05f, -1.05f, // B
 			-0.5f,  0.05f, -1.05f, // A
-			-0.5f, -0.05f, -1.05f, // C
-			-0.5f,  0.05f, -1.25f, // E
-			-0.5f, -0.05f, -1.25f, // G
-			 0.5f, -0.05f, -1.25f, // H
+			 0.5f,  0.05f, -1.05f, // B
 			-0.5f, -0.05f, -1.05f, // C
 			 0.5f, -0.05f, -1.05f, // D
-			 0.5f,  0.05f, -1.05f, // B
-			 0.5f, -0.05f, -1.25f, // H
-			 0.5f,  0.05f, -1.25f, // F
 			-0.5f,  0.05f, -1.25f, // E
+			 0.5f,  0.05f, -1.25f, // F
+			-0.5f, -0.05f, -1.25f, // G
+			 0.5f, -0.05f, -1.25f, // H
 
-
-			1.0, 0.0, 0.0, 0.0, // F		//the coloring impacts the triangle that it started
-			1.0, 0.0, 0.0, 0.0, // E
+			1.0, 0.0, 0.0, 0.0, // A		//the coloring impacts the triangle that it started
 			1.0, 0.0, 0.0, 0.0, // B
-			1.0, 0.0, 0.0, 0.0, // A
-			1.0, 0.0, 0.0, 0.0, // C
-			1.0, 0.0, 0.0, 0.0, // E
-			1.0, 0.0, 0.0, 0.0, // G
-			1.0, 0.0, 0.0, 0.0, // H
 			1.0, 0.0, 0.0, 0.0, // C
 			1.0, 0.0, 0.0, 0.0, // D
-			1.0, 0.0, 0.0, 0.0, // B
-			1.0, 0.0, 0.0, 0.0, // H
+			1.0, 0.0, 0.0, 0.0, // E
 			1.0, 0.0, 0.0, 0.0, // F
-			1.0, 0.0, 0.0, 0.0  // E
+			1.0, 0.0, 0.0, 0.0, // G
+			1.0, 0.0, 0.0, 0.0, // H
 			};
 
-			/* colors
-			* surfaces are like that:
-			* acdb blue
-			* abef red
-			* bfhd green
-			* rest is black
-
-			1.0, 1.0, 0.0, 1.0, // F
-			1.0, 0.0, 0.0, 1.0, // E
-			1.0, 1.0, 1.0, 1.0, // B
-			1.0, 0.0, 0.0, 1.0, // A
-			0.0, 0.0, 1.0, 1.0, // C
-			1.0, 0.0, 0.0, 1.0, // E
-			0.0, 0.0, 0.0, 1.0, // G
-			0.0, 1.0, 0.0, 1.0, // H
-			0.0, 0.0, 1.0, 1.0, // C
-			0.0, 1.0, 1.0, 1.0, // D
-			1.0, 1.0, 1.0, 1.0, // B
-			0.0, 1.0, 0.0, 1.0, // H
-			1.0, 1.0, 0.0, 1.0, // F
-			1.0, 0.0, 0.0, 1.0 // E
-			};
-			*/
-
-
-	/*float incomingVertexes[] = { -0.5f, -0.05f, 0.0f, // bottom left
-	 0.5f, -0.05f, 0.0f, // bottom right
-	 -0.5f, 0.05f, 0.0f, // top left
-	 0.5f, 0.05, 0.0f // top right
-	 };
-	 */
 	elementPerVertex = 7;
 	vertexPositionsSize = sizeof(incomingVertexes);
 	vertexPositionsPointer = (float*) malloc(vertexPositionsSize);
 	memcpy(vertexPositionsPointer, incomingVertexes, vertexPositionsSize);
 	vertexPositionsSize = vertexPositionsSize / sizeof(float);
 
+}
+
+void RacketBar::initializeElementArray() {
+	unsigned int incomingElements[] = {
+			0,1,2,
+			1,2,3,
+			1,3,7,
+			1,7,5,
+			0,1,5,
+			4,5,0,
+			0,4,6,
+			0,2,6,
+			4,5,6,
+			5,6,7,
+			2,6,7,
+			7,3,2
+
+	};
+
+	elementsOrderSize = sizeof(incomingElements);
+	elementsOrderPointer = (unsigned int*) malloc(elementsOrderSize);
+	memcpy(elementsOrderPointer, incomingElements, elementsOrderSize);
 }
 
 GLuint RacketBar::CreateShader(GLenum eShaderType,
@@ -195,12 +173,19 @@ void RacketBar::initializeProgram() {
 }
 
 void RacketBar::initializeVertexBuffer() {
-	glGenBuffers(1, &positionBufferObject);
+	glGenBuffers(1, &vertexPositionsBuffer);
 
-	glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBuffer);
 	glBufferData(GL_ARRAY_BUFFER, vertexPositionsSize * sizeof(float),
 			vertexPositionsPointer, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &elementOrderBuffer);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementOrderBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER,elementsOrderSize,
+			elementsOrderPointer, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void RacketBar::initializePerspectiveMatrix(int height, int width){
@@ -238,6 +223,7 @@ RacketBar::RacketBar(bool userBar, int height, int width) {
 	initializeFragmentShader();
 	initializeProgram();
 	initializeVertexPositions();
+	initializeElementArray();
 	initializeVertexBuffer();
 	initializePerspectiveMatrix(height, width);
 
@@ -265,7 +251,7 @@ void RacketBar::draw(float position) {
 
 	glUniformMatrix4fv(perspectiveMatrixLocation, 1, GL_FALSE, perspectiveMatrix);
 
-	glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBuffer);
 	glEnableVertexAttribArray(positionBufferPointer);
 	glEnableVertexAttribArray(colorInputPointer);
 
@@ -273,10 +259,11 @@ void RacketBar::draw(float position) {
 	int startPoint = vertexPositionsSize * sizeof(float) / elementPerVertex * 3;
 	glVertexAttribPointer(colorInputPointer, 4, GL_FLOAT, GL_FALSE, 0, (void *)(startPoint));
 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementOrderBuffer);
 	//FIXME 3 should not be hardcoded
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexPositionsSize / elementPerVertex);
+	//glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexPositionsSize / elementPerVertex);
 
-	//glDrawElements(GL_TRIANGLES, sizeof(drawOrder),GL_UNSIGNED_SHORT, &drawOrderBufferObject);
+	glDrawElements(GL_TRIANGLES, elementsOrderSize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 
 	glDisableVertexAttribArray(colorInputPointer);
 	glDisableVertexAttribArray(positionBufferPointer);

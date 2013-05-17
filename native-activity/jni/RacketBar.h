@@ -25,11 +25,14 @@ private:
 	bool isUserBar;
 	float fYOffset;
 	float* vertexPositionsPointer;
+	unsigned int* elementsOrderPointer;
 	int vertexPositionsSize;
+	int elementsOrderSize;
 	int elementPerVertex;
 	float perspectiveMatrix[16];
 	GLuint _racketbarGLSLProgram;
-	GLuint positionBufferObject;
+	GLuint vertexPositionsBuffer;
+	GLuint elementOrderBuffer;
 	GLuint positionBufferPointer;
 	GLuint colorInputPointer;
 
@@ -38,6 +41,7 @@ private:
 	void initializeVertexShader();
 	void initializeFragmentShader();
 	void initializeVertexPositions();
+	void initializeElementArray();
 	void initializePerspectiveMatrix(int, int);
 	GLuint CreateShader(GLenum eShaderType, const std::string &strShaderFile);
 	GLuint CreateProgram(const std::vector<GLuint> &shaderList);
