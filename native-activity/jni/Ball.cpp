@@ -1,5 +1,5 @@
 /*
- * openglHelper.cpp
+ * Ball.cpp
  *
  *  Created on: 28 Mar 2013
  *      Author: Engin Manap
@@ -20,8 +20,10 @@ namespace androng {
 				"attribute vec4 vPosition;\n"
 				"uniform vec2 offset;\n"
 				"uniform mat4 perspectiveMatrix;\n"
+				"varying mediump vec4 outputColor;\n"
 				"void main()\n"
 				"{\n"
+				"outputColor = vec4( 0.5, 0.5, 0.5, 1.0 );"
 				"vec4 lastPosition = vPosition + vec4(offset.x, offset.y, 0.0, 0.0);\n"
 				"gl_Position = perspectiveMatrix * lastPosition;\n"
 				"}\n";
@@ -30,11 +32,11 @@ namespace androng {
 
 	void Ball::initializeFragmentShader() {
 		FSbasic =
-				"precision mediump float;\n"
+				"varying mediump vec4 outputColor;\n"
 				// "uniform vec4 vColor;\n"
 				"void main() {\n"
-					"vec4 originalColor = vec4 ( 0.5, 0.5, 0.5, 1.0 );\n"
-					"gl_FragColor = originalColor;\n"
+					//"vec4 originalColor = vec4 ( 0.5, 0.5, 0.5, 1.0 );\n"
+					"gl_FragColor = outputColor;\n"
 				"}\n";
 	}
 
@@ -56,12 +58,12 @@ namespace androng {
 		*(vertexPositionsPointer + 1) = 0.0f;
 		*(vertexPositionsPointer + 2) = -1.15;
 		for(int i=1;i <= ballVertexCount;i++){
-			*(vertexPositionsPointer + (elementPerVertex * i)) = sin(	ballElementAngle * 2 * i) * ballRadius;
-			*(vertexPositionsPointer + (elementPerVertex * i) + 1) = cos(	ballElementAngle * 2 * i) * ballRadius;
+			*(vertexPositionsPointer + (elementPerVertex * i)    ) = sin(ballElementAngle * 2 * i) * ballRadius;
+			*(vertexPositionsPointer + (elementPerVertex * i) + 1) = cos(ballElementAngle * 2 * i) * ballRadius;
 			*(vertexPositionsPointer + (elementPerVertex * i) + 2) = -1.15;
 		}
-		*(vertexPositionsPointer + (elementPerVertex * (ballVertexCount+1))) = sin(	ballElementAngle * 2 * (ballVertexCount+1)) * ballRadius;
-		*(vertexPositionsPointer + (elementPerVertex * (ballVertexCount+1))+1) = cos(	ballElementAngle * 2 * (ballVertexCount+1)) * ballRadius;
+		*(vertexPositionsPointer + (elementPerVertex * (ballVertexCount+1))  ) = sin(ballElementAngle * 2 * (ballVertexCount+1)) * ballRadius;
+		*(vertexPositionsPointer + (elementPerVertex * (ballVertexCount+1))+1) = cos(ballElementAngle * 2 * (ballVertexCount+1)) * ballRadius;
 		*(vertexPositionsPointer + (elementPerVertex * (ballVertexCount+1))+2) = -1.15;
 
 	}
@@ -146,7 +148,6 @@ namespace androng {
 		glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
 		glBufferData(GL_ARRAY_BUFFER, vertexPositionsSize * sizeof(float),
 				vertexPositionsPointer, GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
 	void Ball::initializePerspectiveMatrix(int height, int width){
@@ -170,7 +171,6 @@ namespace androng {
 		perspectiveMatrix[10] = (fzFar + fzNear) / (fzNear - fzFar);
 		perspectiveMatrix[11] = -1.0f;
 		perspectiveMatrix[14] = (2 * fzFar * fzNear) / (fzNear - fzFar);
-		LOGI("init pers");
 	}
 
 
@@ -188,26 +188,22 @@ namespace androng {
 		initializePerspectiveMatrix(height,width);
 
 		positionBufferPointer = glGetAttribLocation(_ballGLSLProgram, "vPosition");
+		perspectiveMatrixLocation = glGetUniformLocation(_ballGLSLProgram, "perspectiveMatrix");
+		offsetLocation = glGetUniformLocation(_ballGLSLProgram, "offset");
 	}
 
 	void Ball::draw(float xPosition, float yPosition) {
 
 		glUseProgram(_ballGLSLProgram);
 
-		GLint offsetLocation = glGetUniformLocation(_ballGLSLProgram, "offset");
-
 		glUniform2f(offsetLocation, xPosition, yPosition);
-
-		GLint perspectiveMatrixLocation = glGetUniformLocation(_ballGLSLProgram, "perspectiveMatrix");
-
 		glUniformMatrix4fv(perspectiveMatrixLocation, 1, GL_FALSE, perspectiveMatrix);
 
 		glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
 		glEnableVertexAttribArray(positionBufferPointer);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(positionBufferPointer, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-				vertexPositionsSize / elementPerVertex);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,	vertexPositionsSize / elementPerVertex);
 
 		glDisableVertexAttribArray(positionBufferPointer);
 		glUseProgram(0);

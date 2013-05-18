@@ -94,7 +94,6 @@ static int engine_init_display(struct engine* engine) {
     engine->state.angle = 0;
 
     gameEngine->initOpengl(openglHelper);
-    //openglHelper = new androng::OpenglHelper();
 
     return 0;
 }

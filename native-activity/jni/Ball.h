@@ -34,6 +34,8 @@ private:
 	GLuint _ballGLSLProgram;
 	GLuint positionBufferObject;
 	GLuint positionBufferPointer;
+	GLuint perspectiveMatrixLocation;
+	GLuint offsetLocation;
 
 	std::string VSbasic;
 	std::string FSbasic;

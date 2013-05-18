@@ -11,6 +11,11 @@
 #include "RacketBar.h"
 #include "Ball.h"
 
+extern PFNGLGENVERTEXARRAYSOESPROC glGenVertexArraysOES;
+extern PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayOES;
+extern PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArraysOES;
+extern PFNGLISVERTEXARRAYOESPROC glIsVertexArrayOES;
+
 namespace androng {
 
 class OpenglHelper {

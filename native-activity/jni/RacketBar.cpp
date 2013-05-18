@@ -1,5 +1,5 @@
 /*
- * openglHelper.cpp
+ * RacketBar.cpp
  *
  *  Created on: 28 Mar 2013
  *      Author: Engin Manap
@@ -24,7 +24,7 @@ void RacketBar::initializeVertexShader() {
 	VSRacketbarbasic =
 
 			"attribute vec4 vPosition;\n"
-			"attribute vec4 vColor;\n"
+			"attribute mediump vec4 vColor;\n"
 			"varying mediump vec4 outputColor;\n"
 			"uniform mat4 perspectiveMatrix;\n"
 			"uniform vec2 offset;\n"
@@ -40,10 +40,11 @@ void RacketBar::initializeVertexShader() {
 void RacketBar::initializeFragmentShader() {
 	FSRacketbarbasic =
 			"varying mediump vec4 outputColor;\n"
-					"void main() {\n"
-					//"gl_FragColor = vec4 ( 0.8, 0.0, 0.0, 1.0 ) + outputColor;\n"
-					"gl_FragColor = outputColor;\n"
-					"}\n";
+			"\n"
+			"void main() {\n"
+				//"gl_FragColor = vec4 ( 0.8, 0.0, 0.0, 1.0 ) + outputColor;\n"
+				"gl_FragColor = outputColor;\n"
+			"}\n";
 }
 
 void RacketBar::initializeVertexPositions() {
@@ -105,7 +106,7 @@ void RacketBar::initializeVertexPositions() {
 	vertexPositionsSize = sizeof(incomingVertexes);
 	vertexPositionsPointer = (float*) malloc(vertexPositionsSize);
 	memcpy(vertexPositionsPointer, incomingVertexes, vertexPositionsSize);
-	vertexPositionsSize = vertexPositionsSize / sizeof(float);
+	vertexPositionsCount = vertexPositionsSize / sizeof(float);
 
 }
 
@@ -210,16 +211,14 @@ void RacketBar::initializeVertexBuffer() {
 	glGenBuffers(1, &vertexPositionsBuffer);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertexPositionsSize * sizeof(float),
+	glBufferData(GL_ARRAY_BUFFER, vertexPositionsSize,
 			vertexPositionsPointer, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, &elementOrderBuffer);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementOrderBuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,elementsOrderSize,
 			elementsOrderPointer, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void RacketBar::initializePerspectiveMatrix(int height, int width){
@@ -246,6 +245,34 @@ void RacketBar::initializePerspectiveMatrix(int height, int width){
 
 }
 
+
+void RacketBar::initializeVertexArrayObject(){
+	positionBufferPointer = glGetAttribLocation(_racketbarGLSLProgram,
+			"vPosition");
+
+	colorInputPointer = glGetAttribLocation(_racketbarGLSLProgram, "vColor");
+
+	glGenVertexArraysOES(1, &vertexArrayObject);
+	glBindVertexArrayOES(vertexArrayObject);
+
+
+	int colorDataOffset = vertexPositionsSize / elementPerVertex * 3;
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementOrderBuffer);
+
+	glVertexAttribPointer(positionBufferPointer, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(positionBufferPointer);
+
+	glVertexAttribPointer(colorInputPointer, 4, GL_FLOAT, GL_FALSE, 0, (void*)colorDataOffset);
+	glEnableVertexAttribArray(colorInputPointer);
+
+	glBindVertexArrayOES(0);
+	glDisableVertexAttribArray(positionBufferPointer);
+	glDisableVertexAttribArray(colorInputPointer);
+}
+
+
 RacketBar::RacketBar(bool userBar, int height, int width) {
 	if (userBar) {
 		fYOffset = -0.8f;
@@ -260,29 +287,40 @@ RacketBar::RacketBar(bool userBar, int height, int width) {
 	initializeElementArray();
 	initializeVertexBuffer();
 	initializePerspectiveMatrix(height, width);
+	initializeVertexArrayObject();
 
-	positionBufferPointer = glGetAttribLocation(_racketbarGLSLProgram, "vPosition");
-	colorInputPointer = glGetAttribLocation(_racketbarGLSLProgram, "vColor");
+	offsetLocation = glGetUniformLocation(_racketbarGLSLProgram,
+			"offset");
+	perspectiveMatrixLocation = glGetUniformLocation(
+			_racketbarGLSLProgram, "perspectiveMatrix");
+
+	//positionBufferPointer = glGetAttribLocation(_racketbarGLSLProgram, "vPosition");
+	//colorInputPointer = glGetAttribLocation(_racketbarGLSLProgram, "vColor");
 }
 
 void RacketBar::draw(float position) {
 
-	/*
-	 "attribute vec4 vPosition;\n"
-	 "\n"
-	 "uniform vec2 offset;\n"
-	 "uniform float zNear;\n"
-	 "uniform float zFar;\n"
-	 "uniform float frustumScale;\n"
-	 */
+	glUseProgram(_racketbarGLSLProgram);
+
+	glUniform2f(offsetLocation, position, fYOffset);
+	glUniformMatrix4fv(perspectiveMatrixLocation, 1, GL_FALSE,
+			perspectiveMatrix);
+
+	glBindVertexArrayOES(vertexArrayObject);
+
+	glDrawElements(GL_TRIANGLES, elementsOrderSize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+
+	glBindVertexArrayOES(0);
+
+	glUseProgram(0);
+}
+
+void RacketBar::draw2(float position) {
+
 
 	glUseProgram(_racketbarGLSLProgram);
 
-	GLint offsetLocation = glGetUniformLocation(_racketbarGLSLProgram, "offset");
 	glUniform2f(offsetLocation, position, fYOffset);
-
-	GLint perspectiveMatrixLocation = glGetUniformLocation(_racketbarGLSLProgram, "perspectiveMatrix");
-
 	glUniformMatrix4fv(perspectiveMatrixLocation, 1, GL_FALSE, perspectiveMatrix);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBuffer);
@@ -290,18 +328,18 @@ void RacketBar::draw(float position) {
 	glEnableVertexAttribArray(colorInputPointer);
 
 	glVertexAttribPointer(positionBufferPointer, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	int startPoint = vertexPositionsSize * sizeof(float) / elementPerVertex * 3;
+	int startPoint = vertexPositionsSize / elementPerVertex * 3;
 	glVertexAttribPointer(colorInputPointer, 4, GL_FLOAT, GL_FALSE, 0, (void *)(startPoint));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementOrderBuffer);
-	//FIXME 3 should not be hardcoded
+
 	//glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexPositionsSize / elementPerVertex);
 
 	glDrawElements(GL_TRIANGLES, elementsOrderSize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 
 	glDisableVertexAttribArray(colorInputPointer);
 	glDisableVertexAttribArray(positionBufferPointer);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	glUseProgram(0);
 }
 

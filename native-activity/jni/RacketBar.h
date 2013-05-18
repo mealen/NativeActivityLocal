@@ -15,6 +15,11 @@
 #ifndef RACKETBAR_H_
 #define RACKETBAR_H_
 
+extern PFNGLGENVERTEXARRAYSOESPROC glGenVertexArraysOES;
+extern PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayOES;
+extern PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArraysOES;
+extern PFNGLISVERTEXARRAYOESPROC glIsVertexArrayOES;
+
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 
 namespace androng {
@@ -27,6 +32,7 @@ private:
 	float* vertexPositionsPointer;
 	unsigned int* elementsOrderPointer;
 	int vertexPositionsSize;
+	int vertexPositionsCount;
 	int elementsOrderSize;
 	int elementPerVertex;
 	float perspectiveMatrix[16];
@@ -35,6 +41,11 @@ private:
 	GLuint elementOrderBuffer;
 	GLuint positionBufferPointer;
 	GLuint colorInputPointer;
+
+	GLuint vertexArrayObject;
+
+	GLuint perspectiveMatrixLocation;
+	GLuint offsetLocation;
 
 	std::string VSRacketbarbasic;
 	std::string FSRacketbarbasic;
@@ -47,10 +58,12 @@ private:
 	GLuint CreateProgram(const std::vector<GLuint> &shaderList);
 	void initializeProgram();
 	void initializeVertexBuffer();
+	void initializeVertexArrayObject();
 
 public:
 	RacketBar(bool, int, int);
 	void draw(float);
+	void draw2(float);
 
 };
 }
