@@ -27,7 +27,7 @@ OpenglHelper::OpenglHelper(int viewHeight, int viewWidth) {
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
     glDepthFunc(GL_LEQUAL);
-    glDepthRangef(0.0f, 1.0f);
+
 	glDisable(GL_CULL_FACE);
 
 
@@ -36,6 +36,12 @@ OpenglHelper::OpenglHelper(int viewHeight, int viewWidth) {
     glBindVertexArrayOES = (PFNGLBINDVERTEXARRAYOESPROC)eglGetProcAddress ( "glBindVertexArrayOES" );
     glDeleteVertexArraysOES = (PFNGLDELETEVERTEXARRAYSOESPROC)eglGetProcAddress ( "glDeleteVertexArraysOES" );
     glIsVertexArrayOES = (PFNGLISVERTEXARRAYOESPROC)eglGetProcAddress ( "glIsVertexArrayOES" );
+
+    LOGI("glGenVertexArraysOES %p", glGenVertexArraysOES);
+    LOGI("glBindVertexArrayOES %p", glBindVertexArrayOES);
+    LOGI("glDeleteVertexArraysOES %p", glDeleteVertexArraysOES);
+    LOGI("glIsVertexArrayOES %p", glIsVertexArrayOES);
+
 
 
 	rbUser = new RacketBar(true, viewHeight, viewWidth);
@@ -46,10 +52,17 @@ OpenglHelper::OpenglHelper(int viewHeight, int viewWidth) {
 void OpenglHelper::openglDraw(float bottomRacketPosition) {
 	glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
 	glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
-	//RacketBar rb;
-	rbUser->draw2(bottomRacketPosition);
-	rbCPU->draw2(0.25);
+
+
+
+
 	ball->draw(0, 0);
+
+	rbUser->draw(bottomRacketPosition);
+
+	rbCPU->draw(0.25);
+
+
 }
 
 }
