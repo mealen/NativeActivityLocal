@@ -264,6 +264,7 @@ void RacketBar::initializeVertexArrayObject(){
 	glVertexAttribPointer(positionBufferPointer, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(positionBufferPointer);
 
+
 	glVertexAttribPointer(colorInputPointer, 4, GL_FLOAT, GL_FALSE, 0, (void*)colorDataOffset);
 	glEnableVertexAttribArray(colorInputPointer);
 
@@ -306,7 +307,27 @@ void RacketBar::draw(float position) {
 	glUniformMatrix4fv(perspectiveMatrixLocation, 1, GL_FALSE,
 			perspectiveMatrix);
 
+
+/*
+	int colorDataOffset = vertexPositionsSize / elementPerVertex * 3;
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementOrderBuffer);
+
+	glVertexAttribPointer(positionBufferPointer, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(positionBufferPointer);
+
+	glVertexAttribPointer(colorInputPointer, 4, GL_FLOAT, GL_FALSE, 0, (void*)colorDataOffset);
+	glEnableVertexAttribArray(colorInputPointer);
+
+	glDisableVertexAttribArray(positionBufferPointer);
+	glDisable(colorInputPointer);
+
+*/
+
 	glBindVertexArrayOES(vertexArrayObject);
+
+	LOGI("vao address: %u", vertexArrayObject);
 
 	glDrawElements(GL_TRIANGLES, elementsOrderSize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 
@@ -316,7 +337,6 @@ void RacketBar::draw(float position) {
 }
 
 void RacketBar::draw2(float position) {
-
 
 	glUseProgram(_racketbarGLSLProgram);
 

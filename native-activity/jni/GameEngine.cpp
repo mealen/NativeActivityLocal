@@ -70,6 +70,7 @@ void GameEngine::drawFrame() {
 	temp = temp * 2;
 	oglHelper->openglDraw(temp);
 
+
 	eglSwapBuffers(androidEngine->display, androidEngine->surface);
 }
 

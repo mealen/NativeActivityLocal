@@ -68,6 +68,19 @@ namespace androng {
 
 	}
 
+
+	void Ball::initializeElementArray() {
+		unsigned int incomingElements[] = {
+					0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17
+
+		};
+
+		elementsOrderSize = sizeof(incomingElements);
+		elementsOrderPointer = (unsigned int*) malloc(elementsOrderSize);
+		memcpy(elementsOrderPointer, incomingElements, elementsOrderSize);
+	}
+
+
 	GLuint Ball::CreateShader(GLenum eShaderType, const std::string &strShaderFile) {
 		GLuint shader = glCreateShader(eShaderType);
 		const char *strFileData = strShaderFile.c_str();
@@ -148,6 +161,28 @@ namespace androng {
 		glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
 		glBufferData(GL_ARRAY_BUFFER, vertexPositionsSize * sizeof(float),
 				vertexPositionsPointer, GL_STATIC_DRAW);
+
+		glGenBuffers(1, &elementOrderBuffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementOrderBuffer);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER,elementsOrderSize,
+				elementsOrderPointer, GL_STATIC_DRAW);
+	}
+
+	void Ball::initializeVertexArrayObject(){
+		positionBufferPointer = glGetAttribLocation(_ballGLSLProgram, "vPosition");
+
+		glGenVertexArraysOES(1, &vertexArrayObject);
+		glBindVertexArrayOES(vertexArrayObject);
+
+		glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementOrderBuffer);
+
+		glVertexAttribPointer(positionBufferPointer, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(positionBufferPointer);
+
+		glBindVertexArrayOES(0);
+		glDisableVertexAttribArray(positionBufferPointer);
+
 	}
 
 	void Ball::initializePerspectiveMatrix(int height, int width){
@@ -184,15 +219,38 @@ namespace androng {
 		initializeFragmentShader();
 		initializeProgram();
 		initializeVertexPositions();
+		initializeElementArray();
 		initializeVertexBuffer();
-		initializePerspectiveMatrix(height,width);
 
-		positionBufferPointer = glGetAttribLocation(_ballGLSLProgram, "vPosition");
+		initializePerspectiveMatrix(height,width);
+		initializeVertexArrayObject();
+
+
 		perspectiveMatrixLocation = glGetUniformLocation(_ballGLSLProgram, "perspectiveMatrix");
 		offsetLocation = glGetUniformLocation(_ballGLSLProgram, "offset");
 	}
 
 	void Ball::draw(float xPosition, float yPosition) {
+
+
+		glUseProgram(_ballGLSLProgram);
+
+		glUniform2f(offsetLocation, xPosition, yPosition);
+		glUniformMatrix4fv(perspectiveMatrixLocation, 1, GL_FALSE, perspectiveMatrix);
+
+		glBindVertexArrayOES(vertexArrayObject);
+
+		LOGI("vao address for ball: %u", vertexArrayObject);
+
+		//glDrawArrays(GL_TRIANGLE_FAN, 0,vertexPositionsSize / elementPerVertex);
+		glDrawElements(GL_TRIANGLE_FAN, elementsOrderSize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+
+		glBindVertexArrayOES(0);
+
+		glUseProgram(0);
+	}
+
+	void Ball::draw2(float xPosition, float yPosition) {
 
 		glUseProgram(_ballGLSLProgram);
 
@@ -203,9 +261,10 @@ namespace androng {
 		glEnableVertexAttribArray(positionBufferPointer);
 		glVertexAttribPointer(positionBufferPointer, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		glDrawArrays(GL_TRIANGLE_FAN, 0,	vertexPositionsSize / elementPerVertex);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,vertexPositionsSize / elementPerVertex);
 
 		glDisableVertexAttribArray(positionBufferPointer);
+
 		glUseProgram(0);
 	}
 
