@@ -39,6 +39,7 @@ void GameEngine::stopTimer() {
 
 void GameEngine::runGame() {
 	//while (0 == 0) {
+	androidEngine->animating = 0;
 	if(androidPart::processEvents(state, androidEngine))
 		return;
 	game();

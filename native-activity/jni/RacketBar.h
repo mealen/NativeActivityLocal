@@ -11,6 +11,7 @@
 #include <GLES2/gl2ext.h>
 #include <algorithm>
 #include <android/log.h>
+#include "glslHelper.h"
 
 #ifndef RACKETBAR_H_
 #define RACKETBAR_H_
@@ -19,8 +20,6 @@ extern PFNGLGENVERTEXARRAYSOESPROC glGenVertexArraysOES;
 extern PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayOES;
 extern PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArraysOES;
 extern PFNGLISVERTEXARRAYOESPROC glIsVertexArrayOES;
-
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 
 namespace androng {
 
@@ -54,8 +53,7 @@ private:
 	void initializeVertexPositions();
 	void initializeElementArray();
 	void initializePerspectiveMatrix(int, int);
-	GLuint CreateShader(GLenum eShaderType, const std::string &strShaderFile);
-	GLuint CreateProgram(const std::vector<GLuint> &shaderList);
+
 	void initializeProgram();
 	void initializeVertexBuffer();
 	void initializeVertexArrayObject();

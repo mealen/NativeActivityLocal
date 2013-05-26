@@ -80,77 +80,13 @@ namespace androng {
 		memcpy(elementsOrderPointer, incomingElements, elementsOrderSize);
 	}
 
-
-	GLuint Ball::CreateShader(GLenum eShaderType, const std::string &strShaderFile) {
-		GLuint shader = glCreateShader(eShaderType);
-		const char *strFileData = strShaderFile.c_str();
-		glShaderSource(shader, 1, &strFileData, NULL);
-
-		glCompileShader(shader);
-
-		GLint status;
-
-		glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-		if (status == GL_FALSE) {
-			GLint infoLogLength;
-			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-			GLchar *strInfoLog = new GLchar[infoLogLength + 1];
-			glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
-
-			const char *strShaderType = NULL;
-			switch (eShaderType) {
-			case GL_VERTEX_SHADER:
-				strShaderType = "vertex";
-				break;
-			case GL_FRAGMENT_SHADER:
-				strShaderType = "fragment";
-				break;
-			}
-
-			/*fprintf(stderr, "Compile failure in %s shader:\n%s\n",
-					strShaderType, strInfoLog);
-					*/
-			LOGI("Compile failure in %s shader:\n%s\n", strShaderType, strInfoLog);
-			delete[] strInfoLog;
-		}
-
-		return shader;
-	}
-
-	GLuint Ball::CreateProgram(const std::vector<GLuint> &shaderList) {
-		GLuint program = glCreateProgram();
-
-		for (size_t iLoop = 0; iLoop < shaderList.size(); iLoop++)
-			glAttachShader(program, shaderList[iLoop]);
-		glLinkProgram(program);
-
-		GLint status;
-		glGetProgramiv(program, GL_LINK_STATUS, &status);
-		if (status == GL_FALSE) {
-			GLint infoLogLength;
-			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-			GLchar *strInfoLog = new GLchar[infoLogLength + 1];
-			glGetProgramInfoLog(program, infoLogLength, NULL, strInfoLog);
-			//fprintf(stderr, "Linker failure: %s\n", strInfoLog);
-			LOGI("Linker failure: %s\n", strInfoLog);
-			delete[] strInfoLog;
-		}
-
-		for (size_t iLoop = 0; iLoop < shaderList.size(); iLoop++)
-			glDetachShader(program, shaderList[iLoop]);
-
-		return program;
-	}
-
 	void Ball::initializeProgram() {
 		std::vector<GLuint> shaderList;
 
-		shaderList.push_back(CreateShader(GL_VERTEX_SHADER, this->VSbasic));
-		shaderList.push_back(CreateShader(GL_FRAGMENT_SHADER, this->FSbasic));
+		shaderList.push_back(GLSLHelper::CreateShader(GL_VERTEX_SHADER, this->VSbasic));
+		shaderList.push_back(GLSLHelper::CreateShader(GL_FRAGMENT_SHADER, this->FSbasic));
 
-		_ballGLSLProgram = CreateProgram(shaderList);
+		_ballGLSLProgram = GLSLHelper::CreateProgram(shaderList);
 
 		std::for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
 	}
@@ -171,6 +107,9 @@ namespace androng {
 	void Ball::initializeVertexArrayObject(){
 		positionBufferPointer = glGetAttribLocation(_ballGLSLProgram, "vPosition");
 
+		perspectiveMatrixLocation = glGetUniformLocation(_ballGLSLProgram, "perspectiveMatrix");
+		offsetLocation = glGetUniformLocation(_ballGLSLProgram, "offset");
+
 		glGenVertexArraysOES(1, &vertexArrayObject);
 		glBindVertexArrayOES(vertexArrayObject);
 
@@ -181,7 +120,6 @@ namespace androng {
 		glEnableVertexAttribArray(positionBufferPointer);
 
 		glBindVertexArrayOES(0);
-		glDisableVertexAttribArray(positionBufferPointer);
 
 	}
 
@@ -225,26 +163,16 @@ namespace androng {
 		initializePerspectiveMatrix(height,width);
 		initializeVertexArrayObject();
 
-
-		perspectiveMatrixLocation = glGetUniformLocation(_ballGLSLProgram, "perspectiveMatrix");
-		offsetLocation = glGetUniformLocation(_ballGLSLProgram, "offset");
 	}
 
 	void Ball::draw(float xPosition, float yPosition) {
-
-
 		glUseProgram(_ballGLSLProgram);
 
 		glUniform2f(offsetLocation, xPosition, yPosition);
 		glUniformMatrix4fv(perspectiveMatrixLocation, 1, GL_FALSE, perspectiveMatrix);
 
 		glBindVertexArrayOES(vertexArrayObject);
-
-		LOGI("vao address for ball: %u", vertexArrayObject);
-
-		//glDrawArrays(GL_TRIANGLE_FAN, 0,vertexPositionsSize / elementPerVertex);
 		glDrawElements(GL_TRIANGLE_FAN, elementsOrderSize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
-
 		glBindVertexArrayOES(0);
 
 		glUseProgram(0);

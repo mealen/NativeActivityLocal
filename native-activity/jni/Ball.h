@@ -5,6 +5,9 @@
  *      Author: Engin Manap
  */
 
+#ifndef BALL_H_
+#define BALL_H_
+
 #include <string>
 #include <vector>
 #include <GLES2/gl2.h>
@@ -12,10 +15,7 @@
 #include <algorithm>
 #include <android/log.h>
 #include  <math.h>
-
-#ifndef BALL_H_
-#define BALL_H_
-
+#include "glslHelper.h"
 
 extern PFNGLGENVERTEXARRAYSOESPROC glGenVertexArraysOES;
 extern PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayOES;
@@ -23,8 +23,6 @@ extern PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArraysOES;
 extern PFNGLISVERTEXARRAYOESPROC glIsVertexArrayOES;
 
 #define PI 3.14159265
-
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 
 namespace androng {
 
@@ -62,8 +60,6 @@ private:
 	void initializeElementArray();
 	void initializeVertexArrayObject();
 	void initializePerspectiveMatrix(int, int);
-	GLuint CreateShader(GLenum eShaderType, const std::string &strShaderFile);
-	GLuint CreateProgram(const std::vector<GLuint> &shaderList);
 	void initializeProgram();
 	void initializeVertexBuffer();
 public:

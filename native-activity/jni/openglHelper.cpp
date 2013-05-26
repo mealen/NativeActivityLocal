@@ -9,6 +9,7 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <EGL/egl.h>
+#include <unistd.h>
 
 PFNGLGENVERTEXARRAYSOESPROC glGenVertexArraysOES;
 PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayOES;
@@ -54,14 +55,10 @@ void OpenglHelper::openglDraw(float bottomRacketPosition) {
 	glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
 
-
-
-	ball->draw(0, 0);
-
 	rbUser->draw(bottomRacketPosition);
 
 	rbCPU->draw(0.25);
-
+	ball->draw(0, 0);
 
 }
 

@@ -17,7 +17,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := native-activity
-LOCAL_SRC_FILES := Ball.cpp RacketBar.cpp OpenglHelper.cpp main.cpp GameEngine.cpp 
+LOCAL_SRC_FILES := glslHelper.cpp Ball.cpp RacketBar.cpp OpenglHelper.cpp main.cpp GameEngine.cpp 
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv2
 LOCAL_STATIC_LIBRARIES := android_native_app_glue
 
