@@ -132,6 +132,15 @@ void RacketBar::initializeProgram() {
 
 	_racketbarGLSLProgram = GLSLHelper::CreateProgram(shaderList);
 
+	positionBufferPointer = glGetAttribLocation(_racketbarGLSLProgram, "vPosition");
+	colorInputPointer = glGetAttribLocation(_racketbarGLSLProgram, "vColor");
+	offsetLocation = glGetUniformLocation(_racketbarGLSLProgram, "offset");
+	perspectiveMatrixLocation = glGetUniformLocation(_racketbarGLSLProgram, "perspectiveMatrix");
+
+	glUseProgram(_racketbarGLSLProgram);
+	glUniformMatrix4fv(perspectiveMatrixLocation, 1, GL_FALSE, perspectiveMatrix);
+	glUseProgram(0);
+
 	std::for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
 }
 
@@ -177,16 +186,6 @@ void RacketBar::initializePerspectiveMatrix(int height, int width){
 
 
 void RacketBar::initializeVertexArrayObject(){
-	glUseProgram(_racketbarGLSLProgram);
-
-	positionBufferPointer = glGetAttribLocation(_racketbarGLSLProgram, "vPosition");
-
-	colorInputPointer = glGetAttribLocation(_racketbarGLSLProgram, "vColor");
-
-	offsetLocation = glGetUniformLocation(_racketbarGLSLProgram, "offset");
-	//offsetLocation = 0;
-	perspectiveMatrixLocation = glGetUniformLocation(_racketbarGLSLProgram, "perspectiveMatrix");
-	//perspectiveMatrixLocation = 1;
 	glGenVertexArraysOES(1, &vertexArrayObject);
 	glBindVertexArrayOES(vertexArrayObject);
 
@@ -202,8 +201,6 @@ void RacketBar::initializeVertexArrayObject(){
 	glEnableVertexAttribArray(colorInputPointer);
 
 	glBindVertexArrayOES(0);
-
-	glUseProgram(0);
 }
 
 
@@ -216,21 +213,20 @@ RacketBar::RacketBar(bool userBar, int height, int width) {
 	isUserBar = userBar;
 	initializeVertexShader();
 	initializeFragmentShader();
+	initializePerspectiveMatrix(height, width);
 	initializeProgram();
 	initializeVertexPositions();
 	initializeElementArray();
 	initializeVertexBuffer();
-	initializePerspectiveMatrix(height, width);
+
 	initializeVertexArrayObject();
 }
 
 void RacketBar::draw(float position) {
 	glUseProgram(_racketbarGLSLProgram);
 
-	glUniform2f(offsetLocation, position, fYOffset);
-	glUniformMatrix4fv(perspectiveMatrixLocation, 1, GL_FALSE, perspectiveMatrix);
-
 	glBindVertexArrayOES(vertexArrayObject);
+	glUniform2f(offsetLocation, position, fYOffset);
 	glDrawElements(GL_TRIANGLES, elementsOrderSize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 	glBindVertexArrayOES(0);
 
@@ -242,7 +238,6 @@ void RacketBar::draw2(float position) {
 	glUseProgram(_racketbarGLSLProgram);
 
 	glUniform2f(offsetLocation, position, fYOffset);
-	glUniformMatrix4fv(perspectiveMatrixLocation, 1, GL_FALSE, perspectiveMatrix);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBuffer);
 	glEnableVertexAttribArray(positionBufferPointer);
