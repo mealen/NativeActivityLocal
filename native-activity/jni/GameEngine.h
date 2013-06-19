@@ -30,8 +30,19 @@ private:
 	float relativeSpeed;
 	OpenglHelper* oglHelper;
 
+	float ballX;
+	float ballY;
+
+	float ballDeltaX;
+	float ballDeltaY;
+
+	float borderX;
+	float borderY;
+
 	void game();
-	void drawFrame();
+	void drawFrame(float, float);
+	bool moveBall(float);
+	void setBorders(int, int);
 
 public:
 	void initOpengl(OpenglHelper*&);

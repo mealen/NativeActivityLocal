@@ -29,6 +29,7 @@ void RacketBar::initializeVertexShader() {
 
 void RacketBar::initializeFragmentShader() {
 	FSRacketbarbasic =
+			"precision mediump float;\n"
 			"varying mediump vec4 outputColor;\n"
 			"\n"
 			"void main() {\n"
@@ -186,6 +187,12 @@ void RacketBar::initializePerspectiveMatrix(int height, int width){
 
 
 void RacketBar::initializeVertexArrayObject(){
+
+    LOGI("glGenVertexArraysOES %p", glGenVertexArraysOES);
+    LOGI("glBindVertexArrayOES %p", glBindVertexArrayOES);
+    LOGI("glDeleteVertexArraysOES %p", glDeleteVertexArraysOES);
+    LOGI("glIsVertexArrayOES %p", glIsVertexArrayOES);
+
 	glGenVertexArraysOES(1, &vertexArrayObject);
 	glBindVertexArrayOES(vertexArrayObject);
 
@@ -227,7 +234,14 @@ void RacketBar::draw(float position) {
 
 	glBindVertexArrayOES(vertexArrayObject);
 	glUniform2f(offsetLocation, position, fYOffset);
+
 	glDrawElements(GL_TRIANGLES, elementsOrderSize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR){
+		LOGE("gl error");
+	}
+
+	error = GL_INVALID_OPERATION;
 	glBindVertexArrayOES(0);
 
 	glUseProgram(0);
@@ -245,7 +259,7 @@ void RacketBar::draw2(float position) {
 
 	glVertexAttribPointer(positionBufferPointer, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	int startPoint = vertexPositionsSize / elementPerVertex * 3;
-	glVertexAttribPointer(colorInputPointer, 4, GL_FLOAT, GL_FALSE, 0, (void *)(startPoint));
+	glVertexAttribPointer(colorInputPointer, 4, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void*>(startPoint));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementOrderBuffer);
 

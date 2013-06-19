@@ -26,7 +26,7 @@ private:
 public:
 
 	OpenglHelper(int, int);
-	void openglDraw(float);
+	void openglDraw(float, float, float);
 };
 
 }

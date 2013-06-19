@@ -38,28 +38,21 @@ OpenglHelper::OpenglHelper(int viewHeight, int viewWidth) {
     glDeleteVertexArraysOES = (PFNGLDELETEVERTEXARRAYSOESPROC)eglGetProcAddress ( "glDeleteVertexArraysOES" );
     glIsVertexArrayOES = (PFNGLISVERTEXARRAYOESPROC)eglGetProcAddress ( "glIsVertexArrayOES" );
 
-    LOGI("glGenVertexArraysOES %p", glGenVertexArraysOES);
-    LOGI("glBindVertexArrayOES %p", glBindVertexArrayOES);
-    LOGI("glDeleteVertexArraysOES %p", glDeleteVertexArraysOES);
-    LOGI("glIsVertexArrayOES %p", glIsVertexArrayOES);
-
-
 
 	rbUser = new RacketBar(true, viewHeight, viewWidth);
 	rbCPU = new RacketBar(false, viewHeight, viewWidth);
 	ball = new Ball(viewHeight, viewWidth);
 }
 
-void OpenglHelper::openglDraw(float bottomRacketPosition) {
-	glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
+void OpenglHelper::openglDraw(float bottomRacketPosition, float ballX, float ballY) {
+	glClearColor(0.1f, 0.1f, 0.1f, 0);
 	glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
 
 	rbUser->draw(bottomRacketPosition);
 
 	rbCPU->draw(0.25);
-	ball->draw(0, 0);
-
+	ball->draw(ballX, ballY);
 }
 
 }

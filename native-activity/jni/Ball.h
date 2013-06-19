@@ -47,8 +47,6 @@ private:
 	GLuint elementOrderBuffer;
 	unsigned int* elementsOrderPointer;
 
-
-
 	std::string VSbasic;
 	std::string FSbasic;
 

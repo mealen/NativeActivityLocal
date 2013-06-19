@@ -32,6 +32,7 @@ namespace androng {
 
 	void Ball::initializeFragmentShader() {
 		FSbasic =
+				"precision mediump float;\n"
 				"varying mediump vec4 outputColor;\n"
 				// "uniform vec4 vColor;\n"
 				"void main() {\n"
