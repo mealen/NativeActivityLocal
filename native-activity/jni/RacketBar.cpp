@@ -40,30 +40,30 @@ void RacketBar::initializeFragmentShader() {
 
 void RacketBar::initializeVertexPositions() {
 	float incomingVertexes[] = {
-			-0.5f,  0.05f, -1.05f, // A
-			 0.5f,  0.05f, -1.05f, // B
-			-0.5f, -0.05f, -1.05f, // C
-			 0.5f, -0.05f, -1.05f, // D
-			-0.5f,  0.05f, -1.25f, // E
-			 0.5f,  0.05f, -1.25f, // F
-			-0.5f, -0.05f, -1.25f, // G
-			 0.5f, -0.05f, -1.25f, // H
-			-0.5f,  0.05f, -1.05f, // A
-			 0.5f,  0.05f, -1.05f, // B
-			-0.5f, -0.05f, -1.05f, // C
-			 0.5f, -0.05f, -1.05f, // D
-			-0.5f,  0.05f, -1.25f, // E
-			 0.5f,  0.05f, -1.25f, // F
-			-0.5f, -0.05f, -1.25f, // G
-			 0.5f, -0.05f, -1.25f, // H
-			-0.5f,  0.05f, -1.05f, // A
-			 0.5f,  0.05f, -1.05f, // B
-			-0.5f, -0.05f, -1.05f, // C
-			 0.5f, -0.05f, -1.05f, // D
-			-0.5f,  0.05f, -1.25f, // E
-			 0.5f,  0.05f, -1.25f, // F
-			-0.5f, -0.05f, -1.25f, // G
-			 0.5f, -0.05f, -1.25f, // H
+			-0.25f,  0.05f, -1.05f, // A
+			 0.25f,  0.05f, -1.05f, // B
+			-0.25f, -0.05f, -1.05f, // C
+			 0.25f, -0.05f, -1.05f, // D
+			-0.25f,  0.05f, -1.15f, // E
+			 0.25f,  0.05f, -1.15f, // F
+			-0.25f, -0.05f, -1.15f, // G
+			 0.25f, -0.05f, -1.15f, // H
+			-0.25f,  0.05f, -1.05f, // A
+			 0.25f,  0.05f, -1.05f, // B
+			-0.25f, -0.05f, -1.05f, // C
+			 0.25f, -0.05f, -1.05f, // D
+			-0.25f,  0.05f, -1.15f, // E
+			 0.25f,  0.05f, -1.15f, // F
+			-0.25f, -0.05f, -1.15f, // G
+			 0.25f, -0.05f, -1.15f, // H
+			-0.25f,  0.05f, -1.05f, // A
+			 0.25f,  0.05f, -1.05f, // B
+			-0.25f, -0.05f, -1.05f, // C
+			 0.25f, -0.05f, -1.05f, // D
+			-0.25f,  0.05f, -1.15f, // E
+			 0.25f,  0.05f, -1.15f, // F
+			-0.25f, -0.05f, -1.15f, // G
+			 0.25f, -0.05f, -1.15f, // H
 
 			1.0, 0.0, 0.0, 0.0, // A
 			1.0, 0.0, 0.0, 0.0, // B
@@ -187,12 +187,6 @@ void RacketBar::initializePerspectiveMatrix(int height, int width){
 
 
 void RacketBar::initializeVertexArrayObject(){
-
-    LOGI("glGenVertexArraysOES %p", glGenVertexArraysOES);
-    LOGI("glBindVertexArrayOES %p", glBindVertexArrayOES);
-    LOGI("glDeleteVertexArraysOES %p", glDeleteVertexArraysOES);
-    LOGI("glIsVertexArrayOES %p", glIsVertexArrayOES);
-
 	glGenVertexArraysOES(1, &vertexArrayObject);
 	glBindVertexArrayOES(vertexArrayObject);
 
@@ -241,10 +235,11 @@ void RacketBar::draw(float position) {
 		LOGE("gl error");
 	}
 
-	error = GL_INVALID_OPERATION;
 	glBindVertexArrayOES(0);
 
 	glUseProgram(0);
+
+
 }
 
 void RacketBar::draw2(float position) {

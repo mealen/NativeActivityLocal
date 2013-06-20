@@ -7,7 +7,6 @@
 
 #include "GameEngine.h"
 
-
 namespace androng {
 
 GameEngine::GameEngine(android_app *state, androidPart::engine *androidEngine) {
@@ -23,21 +22,28 @@ GameEngine::GameEngine(android_app *state, androidPart::engine *androidEngine) {
 
 }
 
-void GameEngine::setBorders(int windowHeight, int windowWidth){
-	borderX = (float)windowWidth
-			/ (float)windowHeight;
-	LOGI("border x : %f for width %d, height %d",borderX, windowWidth, windowHeight);
+void GameEngine::setBorders(int windowHeight, int windowWidth) {
+	borderX = (float) windowWidth / (float) windowHeight;
 	borderY = 1.0;
 }
 
-void GameEngine::initOpengl(OpenglHelper*& openglHelper){
 
-	oglHelper = new OpenglHelper(this->androidEngine->height, this->androidEngine->width);
-	LOGI("width %d, height %d",borderX,  this->androidEngine->width, this->androidEngine->height);
-	setBorders(this->androidEngine->height, this->androidEngine->width);
+
+void GameEngine::initOpengl(OpenglHelper*& openglHelper) {
+
+	oglHelper = new OpenglHelper(this->androidEngine->height,
+			this->androidEngine->width);
+
 	openglHelper = oglHelper;
+
+	setBorders(this->androidEngine->height, this->androidEngine->width);
 	//draw 1 frame
+	//set the bar to middle
+	int32_t tempStateX = androidEngine->state.x;
+	androidEngine->state.x = androidEngine->width / 2;
 	drawFrame(ballX, ballY);
+	androidEngine->state.x = tempStateX;
+
 }
 
 void GameEngine::startTimer() {
@@ -52,7 +58,7 @@ void GameEngine::stopTimer() {
 void GameEngine::runGame() {
 	//while (0 == 0) {
 	//androidEngine->animating = 0;
-	if(androidPart::processEvents(state, androidEngine))
+	if (androidPart::processEvents(state, androidEngine))
 		return;
 	game();
 	//}
@@ -69,73 +75,68 @@ void GameEngine::game() {
 //we should multiply any movement with relative speed, this way game works same speed in all environments.
 
 	moveBall(relativeSpeed);
-	drawFrame(ballX,ballY);
+	drawFrame(ballX, ballY);
 
 }
 
 bool GameEngine::moveBall(float speed) {
-	if( (ballX + ballDeltaX) > borderX ){
+	bool returnX = true;
+	bool returnY = true;
+	if ((ballX + ballDeltaX) > borderX) {
 		float tempDelta = ballDeltaX;
 		ballDeltaX = borderX - ballX;
 		ballX = borderX - ballDeltaX;
-		ballDeltaX =  -1 * tempDelta;
-		LOGI("x coll");
+		ballDeltaX = -1 * tempDelta;
 	} else {
-		if( (ballY + ballDeltaY) > borderY ){
-			float tempDelta = ballDeltaY;
-			ballDeltaY = borderY - ballY;
-			ballY = borderY - ballDeltaY;
-			ballDeltaY =  -1 * tempDelta;
-			LOGI("y coll");
+		if ((ballX + ballDeltaX) < (-1 * borderX)) {
+			float tempDelta = ballDeltaX;
+			ballDeltaX = (-1 * borderX) - (ballDeltaX + ballX);
+			ballX = ballDeltaX + (-1 * borderX);
+			ballDeltaX = -1 * tempDelta;
 		} else {
-			if( (ballX + ballDeltaX) < ( -1 * borderX) ){
-				LOGI("x0 coll, ballX: %f, ballDeltaX: %f, borderX: %f", ballX, ballDeltaX, borderX);
-				float tempDelta = ballDeltaX;
-				ballDeltaX = (-1 * borderX) - (ballDeltaX + ballX);
-				ballX = ballDeltaX + (-1 * borderX);
-				ballDeltaX = -1 * tempDelta;
-
+			if ((ballX + ballDeltaX) == (-1 * borderX)) {
+				ballX = (-1 * borderX);
+				ballDeltaX = ballDeltaX * -1;
 			} else {
-				if( (ballY + ballDeltaY) < (-1 * borderY) ){
-					float tempDelta = ballDeltaY;
-					ballDeltaY = (-1 * borderY) - (ballDeltaY + ballY);
-					ballY = ballDeltaY + (-1 * borderY);
-					ballDeltaY = -1 * tempDelta;
-					LOGI("y0 coll");
+				if ((ballX - ballDeltaX) == borderX) {
+					ballX = borderX;
+					ballDeltaX = ballDeltaX * -1;
 				} else {
-					if ((ballY + ballDeltaY) == (-1 * borderY)){
-						ballY = (-1 * borderY);
-						ballDeltaY = ballDeltaY * -1;
-						LOGI("y00");
-					} else {
-						if ((ballX + ballDeltaX) == (-1 * borderX)){
-							ballX = (-1 * borderX);
-							ballDeltaX = ballDeltaX * -1;
-							LOGI("x00");
-						} else {
-							if ((ballY + ballDeltaY) == borderY){
-								ballY = borderY;
-								ballDeltaY = ballDeltaY * -1;
-								LOGI("y10");
-							} else {
-								if ((ballX - ballDeltaX) == borderX){
-									ballX = borderX;
-									ballDeltaX = ballDeltaX * -1;
-									LOGI("x10");
-								} else {
+					ballX += ballDeltaX;
+					returnX = false;
+				}
+			}
+		}
 
-									ballX +=ballDeltaX;
-									ballY +=ballDeltaY;
-								}
-							}
-						}
+	}
 
-					}
+	if ((ballY + ballDeltaY) > borderY) {
+		float tempDelta = ballDeltaY;
+		ballDeltaY = borderY - ballY;
+		ballY = borderY - ballDeltaY;
+		ballDeltaY = -1 * tempDelta;
+	} else {
+		if ((ballY + ballDeltaY) < (-1 * borderY)) {
+			float tempDelta = ballDeltaY;
+			ballDeltaY = (-1 * borderY) - (ballDeltaY + ballY);
+			ballY = ballDeltaY + (-1 * borderY);
+			ballDeltaY = -1 * tempDelta;
+		} else {
+			if ((ballY + ballDeltaY) == (-1 * borderY)) {
+				ballY = (-1 * borderY);
+				ballDeltaY = ballDeltaY * -1;
+			} else {
+				if ((ballY + ballDeltaY) == borderY) {
+					ballY = borderY;
+					ballDeltaY = ballDeltaY * -1;
+				} else {
+					ballY += ballDeltaY;
+					returnY = false;
 				}
 			}
 		}
 	}
-	return false;
+	return (returnX || returnY);
 }
 
 void GameEngine::drawFrame(float ballX, float ballY) {
@@ -147,6 +148,17 @@ void GameEngine::drawFrame(float ballX, float ballY) {
 	float temp = static_cast<float>(androidEngine->state.x);
 	temp = (temp / androidEngine->width) - 0.5;
 	temp = temp * 2;
+
+	float RACKETHALFSIZE = 0.25;
+	if(temp <( -1 + RACKETHALFSIZE )){
+		temp = -1 + RACKETHALFSIZE;
+	} else {
+		if(temp >( 1 - RACKETHALFSIZE)){
+			temp = 1 - RACKETHALFSIZE;
+		}
+	}
+	temp = temp * borderX;
+
 	oglHelper->openglDraw(temp, ballX, ballY);
 
 	eglSwapBuffers(androidEngine->display, androidEngine->surface);
