@@ -49,10 +49,21 @@ void OpenglHelper::openglDraw(float bottomRacketPosition, float ballX, float bal
 	glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
 
-	rbUser->draw(bottomRacketPosition);
+	rbUser->draw2(bottomRacketPosition);
 
 	rbCPU->draw(0.25);
-	ball->draw(ballX, ballY);
+	ball->draw2(ballX, ballY);
+}
+
+float OpenglHelper::getRacketPosition(bool isUser){
+	if(isUser){
+		return rbUser->getPosition();
+	}
+	return rbCPU->getPosition();
+}
+
+float OpenglHelper::getRacketWidth(){
+	return RacketBar::getWidth();
 }
 
 }

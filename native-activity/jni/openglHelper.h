@@ -23,10 +23,13 @@ private:
 	RacketBar *rbUser;
 	RacketBar *rbCPU;
 	Ball *ball;
+
 public:
 
 	OpenglHelper(int, int);
 	void openglDraw(float, float, float);
+	float getRacketWidth();
+	float getRacketPosition(bool);
 };
 
 }

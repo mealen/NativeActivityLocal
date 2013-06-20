@@ -136,6 +136,26 @@ bool GameEngine::moveBall(float speed) {
 			}
 		}
 	}
+
+	float RACKETOFFSET = 0.8;
+	float RACKETHALFHEIGHT = 0.05;
+	float BALLRADIUS = 0.1;
+	if ((ballY + ballDeltaY) > (RACKETOFFSET - RACKETHALFHEIGHT)) {
+		if((ballX + ballDeltaX) <= (oglHelper->getRacketPosition(false) + oglHelper->getRacketWidth() + BALLRADIUS)){ // not pass from right
+			if((ballX + ballDeltaX) >= (oglHelper->getRacketPosition(false) - oglHelper->getRacketWidth() - BALLRADIUS)){ //not pass from left
+					ballY= ballY - ballDeltaY * 2;
+					ballDeltaY = -1 * ballDeltaY;
+			}
+		}
+	} else if ((ballY + ballDeltaY) < (-1 * RACKETOFFSET + RACKETHALFHEIGHT)) {
+		if((ballX + ballDeltaX) <= (oglHelper->getRacketPosition(true) + oglHelper->getRacketWidth() + BALLRADIUS)){ // not pass from right
+			if((ballX + ballDeltaX) >= (oglHelper->getRacketPosition(true) - oglHelper->getRacketWidth() - BALLRADIUS)){ //not pass from left
+					ballY= ballY - ballDeltaY * 2;
+					ballDeltaY = -1 * ballDeltaY;
+			}
+		}
+	}
+
 	return (returnX || returnY);
 }
 
@@ -149,12 +169,12 @@ void GameEngine::drawFrame(float ballX, float ballY) {
 	temp = (temp / androidEngine->width) - 0.5;
 	temp = temp * 2;
 
-	float RACKETHALFSIZE = 0.25;
-	if(temp <( -1 + RACKETHALFSIZE )){
-		temp = -1 + RACKETHALFSIZE;
+	float racketBarHalfSize = oglHelper->getRacketWidth();
+	if(temp <( -1 + racketBarHalfSize )){
+		temp = -1 + racketBarHalfSize;
 	} else {
-		if(temp >( 1 - RACKETHALFSIZE)){
-			temp = 1 - RACKETHALFSIZE;
+		if(temp >( 1 - racketBarHalfSize)){
+			temp = 1 - racketBarHalfSize;
 		}
 	}
 	temp = temp * borderX;

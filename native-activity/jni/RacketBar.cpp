@@ -40,30 +40,30 @@ void RacketBar::initializeFragmentShader() {
 
 void RacketBar::initializeVertexPositions() {
 	float incomingVertexes[] = {
-			-0.25f,  0.05f, -1.05f, // A
-			 0.25f,  0.05f, -1.05f, // B
-			-0.25f, -0.05f, -1.05f, // C
-			 0.25f, -0.05f, -1.05f, // D
-			-0.25f,  0.05f, -1.15f, // E
-			 0.25f,  0.05f, -1.15f, // F
-			-0.25f, -0.05f, -1.15f, // G
-			 0.25f, -0.05f, -1.15f, // H
-			-0.25f,  0.05f, -1.05f, // A
-			 0.25f,  0.05f, -1.05f, // B
-			-0.25f, -0.05f, -1.05f, // C
-			 0.25f, -0.05f, -1.05f, // D
-			-0.25f,  0.05f, -1.15f, // E
-			 0.25f,  0.05f, -1.15f, // F
-			-0.25f, -0.05f, -1.15f, // G
-			 0.25f, -0.05f, -1.15f, // H
-			-0.25f,  0.05f, -1.05f, // A
-			 0.25f,  0.05f, -1.05f, // B
-			-0.25f, -0.05f, -1.05f, // C
-			 0.25f, -0.05f, -1.05f, // D
-			-0.25f,  0.05f, -1.15f, // E
-			 0.25f,  0.05f, -1.15f, // F
-			-0.25f, -0.05f, -1.15f, // G
-			 0.25f, -0.05f, -1.15f, // H
+			-1 * barWidth,  0.05f, -1.05f, // A
+				 barWidth,  0.05f, -1.05f, // B
+			-1 * barWidth, -0.05f, -1.05f, // C
+				 barWidth, -0.05f, -1.05f, // D
+			-1 * barWidth,  0.05f, -1.15f, // E
+				 barWidth,  0.05f, -1.15f, // F
+			-1 * barWidth, -0.05f, -1.15f, // G
+				 barWidth, -0.05f, -1.15f, // H
+			-1 * barWidth,  0.05f, -1.05f, // A
+				 barWidth,  0.05f, -1.05f, // B
+			-1 * barWidth, -0.05f, -1.05f, // C
+				 barWidth, -0.05f, -1.05f, // D
+			-1 * barWidth,  0.05f, -1.15f, // E
+				 barWidth,  0.05f, -1.15f, // F
+			-1 * barWidth, -0.05f, -1.15f, // G
+				 barWidth, -0.05f, -1.15f, // H
+			-1 * barWidth,  0.05f, -1.05f, // A
+				 barWidth,  0.05f, -1.05f, // B
+			-1 * barWidth, -0.05f, -1.05f, // C
+				 barWidth, -0.05f, -1.05f, // D
+			-1 * barWidth,  0.05f, -1.15f, // E
+				 barWidth,  0.05f, -1.15f, // F
+			-1 * barWidth, -0.05f, -1.15f, // G
+				 barWidth, -0.05f, -1.15f, // H
 
 			1.0, 0.0, 0.0, 0.0, // A
 			1.0, 0.0, 0.0, 0.0, // B
@@ -204,8 +204,10 @@ void RacketBar::initializeVertexArrayObject(){
 	glBindVertexArrayOES(0);
 }
 
+float RacketBar::barWidth = RACKETWIDTH;
 
 RacketBar::RacketBar(bool userBar, int height, int width) {
+
 	if (userBar) {
 		fYOffset = -0.8f;
 	} else {
@@ -223,7 +225,12 @@ RacketBar::RacketBar(bool userBar, int height, int width) {
 	initializeVertexArrayObject();
 }
 
+float RacketBar::getWidth(){
+	return barWidth;
+}
+
 void RacketBar::draw(float position) {
+	xPosition = position;
 	glUseProgram(_racketbarGLSLProgram);
 
 	glBindVertexArrayOES(vertexArrayObject);
@@ -243,7 +250,7 @@ void RacketBar::draw(float position) {
 }
 
 void RacketBar::draw2(float position) {
-
+	xPosition = position;
 	glUseProgram(_racketbarGLSLProgram);
 
 	glUniform2f(offsetLocation, position, fYOffset);
@@ -268,4 +275,7 @@ void RacketBar::draw2(float position) {
 	glUseProgram(0);
 }
 
+float RacketBar::getPosition(){
+	return xPosition;
+}
 }

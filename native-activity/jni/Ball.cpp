@@ -61,11 +61,11 @@ namespace androng {
 		for(int i=1;i <= ballVertexCount;i++){
 			*(vertexPositionsPointer + (elementPerVertex * i)    ) = sin(ballElementAngle * 2 * i) * ballRadius;
 			*(vertexPositionsPointer + (elementPerVertex * i) + 1) = cos(ballElementAngle * 2 * i) * ballRadius;
-			*(vertexPositionsPointer + (elementPerVertex * i) + 2) = -1.15;
+			*(vertexPositionsPointer + (elementPerVertex * i) + 2) = -1.10;
 		}
 		*(vertexPositionsPointer + (elementPerVertex * (ballVertexCount+1))  ) = sin(ballElementAngle * 2 * (ballVertexCount+1)) * ballRadius;
 		*(vertexPositionsPointer + (elementPerVertex * (ballVertexCount+1))+1) = cos(ballElementAngle * 2 * (ballVertexCount+1)) * ballRadius;
-		*(vertexPositionsPointer + (elementPerVertex * (ballVertexCount+1))+2) = -1.15;
+		*(vertexPositionsPointer + (elementPerVertex * (ballVertexCount+1))+2) = -1.10;
 
 	}
 

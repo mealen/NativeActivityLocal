@@ -5,6 +5,9 @@
  *      Author: Engin Manap
  */
 
+#ifndef RACKETBAR_H_
+#define RACKETBAR_H_
+
 #include <string>
 #include <vector>
 #include <GLES2/gl2.h>
@@ -13,21 +16,23 @@
 #include <android/log.h>
 #include "glslHelper.h"
 
-#ifndef RACKETBAR_H_
-#define RACKETBAR_H_
+#define RACKETWIDTH 0.25
 
 extern PFNGLGENVERTEXARRAYSOESPROC glGenVertexArraysOES;
 extern PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayOES;
 extern PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArraysOES;
 extern PFNGLISVERTEXARRAYOESPROC glIsVertexArrayOES;
 
+
 namespace androng {
 
 class RacketBar {
 
 private:
+	static float barWidth;
 	bool isUserBar;
 	float fYOffset;
+	float xPosition;
 	float* vertexPositionsPointer;
 	unsigned int* elementsOrderPointer;
 	int vertexPositionsSize;
@@ -60,11 +65,15 @@ private:
 
 public:
 	RacketBar(bool, int, int);
+	static float getWidth();
 	void draw(float);
 	void draw2(float);
+	float getPosition();
 
 };
-}
 
+
+
+}
 
 #endif /* RACKETBAR_H_ */
